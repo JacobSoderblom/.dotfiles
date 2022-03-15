@@ -16,6 +16,7 @@ call plug#begin('~/.vim/plugged')
 
 " Neovim Tree shitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/playground'
 
 " telescope requirements...
 Plug 'nvim-lua/popup.nvim'
@@ -23,34 +24,53 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
 
-Plug 'flazz/vim-colorschemes'
-Plug 'chriskempson/base16-vim'
+Plug 'rust-lang/rust.vim'
+Plug 'darrikonn/vim-gofmt'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
+Plug 'junegunn/gv.vim'
+Plug 'mbbill/undotree'
+Plug 'tpope/vim-dispatch'
+Plug 'theprimeagen/vim-be-good'
+Plug 'gruvbox-community/gruvbox'
+Plug 'luisiacc/gruvbox-baby'
+Plug 'tpope/vim-projectionist'
+Plug 'tomlion/vim-solidity'
+
+" ThePrimeagen plugins
+Plug 'ThePrimeagen/git-worktree.nvim'
+Plug 'ThePrimeagen/refactoring.nvim'
+
+" Debugger Plugins
+Plug 'mfussenegger/nvim-dap'
+Plug 'Pocco81/DAPInstall.nvim'
+Plug 'szw/vim-maximizer'
+
+" Snippets
+Plug 'L3MON4D3/LuaSnip'
+Plug 'rafamadriz/friendly-snippets'
 
 " prettier
 Plug 'sbdchd/neoformat'
 
+Plug 'vim-conf-live/vimconflive2021-colorscheme'
+Plug 'flazz/vim-colorschemes'
+Plug 'chriskempson/base16-vim'
+
+" LSP
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
 call plug#end()
+" lua require("telescope").load_extension("git_worktree")
+lua require("monokai")
 
-set tabstop=4 softtabstop=4
-set shiftwidth=4
-set expandtab
-set smartindent
-set exrc
-set relativenumber
-set nu
-set nohlsearch
-set hidden
-set noerrorbells
-set nowrap
-set noswapfile
-set nobackup
-set undodir=~/.vim/undodir
-set undofile
-set incsearch
-set termguicolors
-set scrolloff=8
-set noshowmode
-set completeopt=menuone,noinsert,noselect
-set signcolumn=yes
+lua require'nvim-treesitter.configs'.setup { highlight = { enable = true }, incremental_selection = { enable = true }, textobjects = { enable = true }}
+let g:vim_be_good_log_file = 1
+let g:vim_apm_log = 1
 
-set colorcolumn=80
+if executable('rg')
+    let g:rg_derive_root='true'
+endif
+
+let loaded_matchparen = 1
+let mapleader = " "
