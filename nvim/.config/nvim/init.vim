@@ -57,8 +57,21 @@ Plug 'vim-conf-live/vimconflive2021-colorscheme'
 Plug 'flazz/vim-colorschemes'
 Plug 'chriskempson/base16-vim'
 
-" LSP
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plebvim lsp Plugins
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
+Plug 'onsails/lspkind-nvim'
+" Plug 'github/copilot.vim'
+Plug 'nvim-lua/lsp_extensions.nvim'
+
+" Plug 'nvim-lua/completion-nvim'
+Plug 'glepnir/lspsaga.nvim'
+Plug 'simrat39/symbols-outline.nvim'
+" Plug 'tjdevries/nlua.nvim'
+" Plug 'tjdevries/lsp_extensions.nvim'
 
 call plug#end()
 " lua require("telescope").load_extension("git_worktree")

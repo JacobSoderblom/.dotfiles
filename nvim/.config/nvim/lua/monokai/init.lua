@@ -11,6 +11,7 @@ Inoremap = CreateNoremap("i", { noremap = true })
 require("monokai.telescope")
 require("monokai.git-worktree")
 require("monokai.nvim-treesitter-context")
+require("monokai.lsp")
 
 require("refactoring.config").setup({
 	formatting = {
