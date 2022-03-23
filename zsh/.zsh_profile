@@ -19,6 +19,8 @@ export DENO_INSTALL="$HOME/.deno"
 export N_PREFIX="$HOME/.local/n"
 export DOTFILES=$HOME/.dotfiles
 
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
 addToPathFront $HOME/.local/.npm-global/bin
 addToPathFront $HOME/.local/n/bin/
 addToPathFront $HOME/.local/go/bin
