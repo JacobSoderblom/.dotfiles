@@ -12,3 +12,6 @@ do
     stow $folder
 done
 popd
+
+cd ~/.fonts
+fc-cache -fv
