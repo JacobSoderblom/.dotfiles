@@ -3,12 +3,6 @@ VIM="nvim"
 
 alias vim="nvim"
 
-PERSONAL=$XDG_CONFIG_HOME/personal
-source $PERSONAL/env
-for i in `find -L $PERSONAL`; do
-    source $i
-done
-
 export CC="clang-12"
 export CXX="clang++-12"
 export PYTHONBREAKPOINT="pudb.set_trace"
@@ -18,13 +12,6 @@ export NF_IDFILE=$HOME/.idfile
 export DENO_INSTALL="$HOME/.deno"
 export N_PREFIX="$HOME/.local/n"
 export DOTFILES=$HOME/.dotfiles
-
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-addToPathFront $HOME/.local/.npm-global/bin
-addToPathFront $HOME/.local/n/bin/
-addToPathFront $HOME/.local/go/bin
-addToPathFront $HOME/go/bin
 
 # Where should I put you?
 # bindkey -s ^f "tmux-sessionizer\n"
