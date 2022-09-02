@@ -109,3 +109,7 @@ source ~/.zsh_profile
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+export PNPM_HOME="/Users/jacob/Library/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+export PATH=$PATH:/Users/jacob/.spicetify
