@@ -103,3 +103,5 @@ source ~/.zsh_profile
 export PNPM_HOME="/Users/jacob/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 export PATH=$PATH:/Users/jacob/.spicetify
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
