@@ -13,5 +13,6 @@ do
 done
 popd
 
+mkdir ~/.fonts
 cd ~/.fonts
 fc-cache -fv

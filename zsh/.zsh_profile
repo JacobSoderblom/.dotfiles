@@ -9,7 +9,6 @@ export PYTHONBREAKPOINT="pudb.set_trace"
 export GOPATH=$HOME/go
 export GIT_EDITOR=$VIM
 export NF_IDFILE=$HOME/.idfile
-export DENO_INSTALL="$HOME/.deno"
 export N_PREFIX="$HOME/.local/n"
 export DOTFILES=$HOME/.dotfiles
 
