@@ -1,13 +1,14 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
+# eval "$(starship init zsh)"
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/jacob/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="spaceship"
+# ZSH_THEME="spaceship"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -69,7 +70,9 @@ ZSH_THEME="spaceship"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-nvm spaceship-vi-mode)
+plugins=(git zsh-nvm zsh-syntax-highlighting)
+
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 
 source $ZSH/oh-my-zsh.sh
 
@@ -100,9 +103,9 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 source ~/.zsh_profile
 
-export PNPM_HOME="/Users/jacob/Library/pnpm"
+export PNPM_HOME="$HOME/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
-export PATH=$PATH:/Users/jacob/.spicetify
+export PATH=$PATH:$HOME/.spicetify
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:~/go/bin
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
