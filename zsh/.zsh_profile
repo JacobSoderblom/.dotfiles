@@ -21,17 +21,17 @@ validateYaml() {
 }
 
 goWork() {
-  git config --local core.sshCommand "ssh -F ~/.ssh/work_config"
+  git config --local core.sshCommand "ssh -F ~/.ssh/work"
   git config --local user.email "253415@skane.se"
 }
 
 goPersonal() {
-  git config --global core.sshCommand "ssh -F ~/.ssh/personal_config"
+  git config --global core.sshCommand "ssh -F ~/.ssh/private"
   git config --global user.email "jacob.soderblom@protonmail.com"
 }
 
 goPersonalLocal() {
-  git config --local core.sshCommand "ssh -F ~/.ssh/personal_config"
+  git config --local core.sshCommand "ssh -F ~/.ssh/private"
   git config --local user.email "jacob.soderblom@protonmail.com"
 }
 
