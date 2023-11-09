@@ -25,12 +25,12 @@ goWork() {
   git config --local user.email "253415@skane.se"
 }
 
-goPersonal() {
+goPrivate() {
   git config --global core.sshCommand "ssh -F ~/.ssh/private"
   git config --global user.email "jacob.soderblom@protonmail.com"
 }
 
-goPersonalLocal() {
+goPrivateLocal() {
   git config --local core.sshCommand "ssh -F ~/.ssh/private"
   git config --local user.email "jacob.soderblom@protonmail.com"
 }
