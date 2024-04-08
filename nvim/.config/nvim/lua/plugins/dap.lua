@@ -80,6 +80,13 @@ return {
 		require("dap-go").setup()
 
 		-- CSharp setup
+
+		dap.adapters.coreclr = {
+			type = "executable",
+			command = "/home/jacob/netcoredbg/netcoredbg",
+			args = { "--interpreter=vscode" },
+		}
+
 		vim.g.dotnet_build_project = function()
 			local default_path = vim.fn.getcwd() .. "/"
 			if vim.g["dotnet_last_proj_path"] ~= nil then
