@@ -134,11 +134,19 @@ return { -- LSP Configuration & Plugins
 		--  - settings (table): Override the default settings passed when initializing the server.
 		--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 		local servers = {
-			csharp_ls = {},
+			omnisharp = {
+				capabilities = capabilities,
+				enable_roslyn_analysers = true,
+				enable_import_completion = true,
+				organize_imports_on_format = true,
+				enable_decompilation_support = true,
+				filetypes = { "cs", "vb", "csproj", "sln", "slnx", "props", "csx", "targets" },
+			},
+			-- csharp_ls = {},
 			tsserver = {},
 			-- clangd = {},
-			-- gopls = {},
-			-- pyright = {},
+			gopls = {},
+			pyright = {},
 			-- rust_analyzer = {},
 			-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 			--
@@ -152,7 +160,7 @@ return { -- LSP Configuration & Plugins
 			lua_ls = {
 				-- cmd = {...},
 				-- filetypes = { ...},
-				-- capabilities = {},
+				capabilities = capabilities,
 				settings = {
 					Lua = {
 						completion = {
