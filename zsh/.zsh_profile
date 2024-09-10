@@ -89,3 +89,40 @@ load-nvmrc() {
 }
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
+
+# Function to upgrade pnpm
+pnpm_upgrade() {
+  local pnpm_path
+  pnpm_path=$(which pnpm)
+
+  if [ -z "$pnpm_path" ]; then
+    echo "pnpm is not installed. Installing..."
+  else
+    echo "Found pnpm at: $pnpm_path"
+    echo "Removing pnpm..."
+    rm -rf "$pnpm_path"
+    if which pnpm > /dev/null 2>&1; then
+      echo "Failed to remove pnpm."
+      return 1
+    else
+      echo "pnpm successfully removed."
+    fi
+  fi
+
+  PNPM_HOME="$HOME/Library/pnpm"
+  if [ ! -d "$PNPM_HOME" ]; then
+    echo "Creating PNPM_HOME directory..."
+    mkdir -p "$PNPM_HOME"
+  fi
+
+  echo "Installing pnpm..."
+  curl -fsSL https://get.pnpm.io/install.sh | sh -
+  source ~/.zshrc
+
+  if pnpm -v; then
+    echo "pnpm has been successfully installed or upgraded."
+  else
+    echo "pnpm installation failed."
+    return 1
+  fi
+}
