@@ -20,9 +20,9 @@ validateYaml() {
     python -c 'import yaml,sys;yaml.safe_load(sys.stdin)' < $1
 }
 
-goWork() {
-  git config --local core.sshCommand "ssh -F ~/.ssh/work"
-  git config --local user.email "253415@skane.se"
+goSticker() {
+  git config --local core.sshCommand "ssh -F ~/.ssh/sticker-app"
+  git config --local user.email "jacob.soderblom@protonmail.com"
 }
 
 goPrivate() {
