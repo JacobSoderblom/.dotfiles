@@ -126,3 +126,47 @@ pnpm_upgrade() {
     return 1
   fi
 }
+
+ssh-add-with-passphrase () {
+    key_file="$(mktemp)"
+    echo "${1}" > ${key_file}
+    chmod 600 ${key_file}
+    if [ -z "${2}" ]; then
+        ssh-add ${key_file}
+    else
+        expect << EOF
+            spawn ssh-add ${key_file}
+            expect "Enter passphrase"
+            send "${2}\n"
+            expect eof
+EOF
+    fi 
+    rm -rf ${key_file}
+}
+
+ssh-add-bw-keys () {
+    bw_status=$(bw status | jq -r '.status')
+    if [[ ${bw_status} != 'unlocked' ]]; then 
+        echo "Bitwarden Vault: ${bw_status}"
+        echo "Please login:"
+        bw --regenerate-session-key
+    fi
+    bw sync &> /dev/null
+    bw list items | jq -c '.[] | select(.fields[0].name=="ssh" and .attachments != null)' | while read key; do
+        local key_pw=$(printf '%q' $(jq -r '.login.password' <<< "${key}"))
+        local key_id=$(jq -r '.id' <<< "${key}")
+        local key_file_name=$(jq -r '.attachments[].fileName' <<< "${key}")
+        local id_ssh=$(bw get attachment ${key_file_name} --itemid ${key_id} --raw)
+        ssh-add-with-passphrase "${id_ssh}" "${key_pw}" &> /dev/null
+    done
+}
+
+ssh () {
+    echo "Temporary adding keys from bitwarden..."
+    ssh_exec=$(sh -c "which ssh")
+    ssh-add-bw-keys
+    nohup bash -c 'sleep 10; ssh-add -D &> /dev/null' </dev/null >/dev/null 2>&1 &
+    disown
+    echo -e '\e[1A\e[KSuccessfull!'
+    ${ssh_exec} $@
+}
