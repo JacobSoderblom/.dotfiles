@@ -22,7 +22,12 @@ validateYaml() {
 
 goSticker() {
   git config --local core.sshCommand "ssh -F ~/.ssh/sticker-app"
-  git config --local user.email "jacob.soderblom@protonmail.com"
+  git config --local user.email "jacob.soderblom@stickerapp.com"
+}
+
+goGlobalSticker() {
+  git config --global core.sshCommand "ssh -F ~/.ssh/sticker-app"
+  git config --global user.email "jacob.soderblom@stickerapp.com"
 }
 
 goPrivate() {
