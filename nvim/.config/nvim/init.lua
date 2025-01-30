@@ -13,6 +13,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require 'vim-options'
 require('lazy').setup {
+  library = { 'nvim-dap-ui' },
   require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',

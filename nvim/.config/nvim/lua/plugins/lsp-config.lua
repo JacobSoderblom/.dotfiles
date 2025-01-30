@@ -157,23 +157,6 @@ return { -- LSP Configuration & Plugins
     local servers = {
       biome = {},
       ts_ls = {},
-      svelte = {
-        on_attach = function(client, bufnr)
-          if client.name == 'svelte' then
-            vim.api.nvim_create_autocmd('BufWritePost', {
-              pattern = { '*.js', '*.ts' },
-              group = vim.api.nvim_create_augroup('svelte_ondidchangetsorjsfile', { clear = true }),
-              callback = function(ctx)
-                -- Use ctx.match instead of ctx.file
-                client.notify('$/onDidChangeTsOrJsFile', { uri = ctx.match })
-              end,
-            })
-          end
-
-          -- Attach keymaps if needed
-          -- You can add key mappings specific to Svelte here
-        end,
-      },
       -- clangd = {},
       -- gopls = {},
       -- pyright = {},

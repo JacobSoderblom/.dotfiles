@@ -12,6 +12,7 @@ return {
           neotree = true,
           mason = true,
           fidget = true,
+          dap_ui = true,
         },
       }
     end,
