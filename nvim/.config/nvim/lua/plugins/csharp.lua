@@ -56,8 +56,16 @@ return {
             },
           }
 
+          local function get_git_root()
+            local git_root = vim.fn.systemlist('git rev-parse --show-toplevel')[1]
+            if vim.v.shell_error ~= 0 then
+              return nil -- Not in a Git repo
+            end
+            return git_root
+          end
+
           if action == 'run' or action == 'test' then
-            table.insert(overseer_components, { 'restart_on_save', paths = { LazyVim.root.git() } })
+            table.insert(overseer_components, { 'restart_on_save', paths = { get_git_root() } })
           end
 
           local command = commands[action]()
@@ -70,7 +78,7 @@ return {
             },
             name = action,
             cmd = command,
-            cwd = LazyVim.root.git(),
+            cwd = get_git_root(),
             components = overseer_components,
           }
           task:start()
