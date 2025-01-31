@@ -9,8 +9,9 @@ return {
   },
   {
     'GustavEikaas/easy-dotnet.nvim',
-    dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim', 'stevearc/overseer.nvim' },
+    dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim', 'stevearc/overseer.nvim', 'akinsho/toggleterm.nvim' },
     config = function()
+      require('overseer').setup()
       local logPath = vim.fn.stdpath 'data' .. '/easy-dotnet/build.log'
       local dotnet = require 'easy-dotnet'
 
@@ -73,8 +74,8 @@ return {
             strategy = {
               'toggleterm',
               use_shell = false,
-              direction = 'horizontal',
-              open_on_start = false,
+              direction = 'float',
+              open_on_start = true,
             },
             name = action,
             cmd = command,
