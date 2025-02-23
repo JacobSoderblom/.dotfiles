@@ -14,6 +14,7 @@ return {
           fidget = true,
           dap_ui = true,
         },
+        transparent_background = true,
       }
     end,
   },

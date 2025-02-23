@@ -128,3 +128,5 @@ esac
 
 export PATH="$PATH:/home/jacob/.dotnet/tools"
 export PATH="$PATH:/home/jacob/.local/share/netcoredbg"
+source /home/jacob/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /home/jacob/.oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
