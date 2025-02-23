@@ -1,0 +1,59 @@
+@define-color background    @theme_bg_color;
+@define-color backgroundm   alpha(@theme_bg_color, 0.75);
+@define-color backgroundn   alpha(@theme_bg_color, 0.25);
+@define-color accent-bg     @theme_selected_bg_color;
+@define-color accent-fg     @theme_selected_fg_color;
+@define-color foreground    @theme_fg_color;
+@define-color border        @borders;
+
+* {
+  border-radius: 6px;
+}
+
+window#osd {
+  background: @backgroundm;
+  color: @accent-bg;
+  padding: 5px;
+  margin: 10px;
+  border: 1px solid @border;
+}
+
+progressbar {
+  background: @backgroundm;
+  color: @accent-bg;
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid @border;
+}
+
+progress {
+  background: @accent-bg;
+  color: @backgroundm;
+  border: 1px solid @border;
+  border-right: 4px solid @border;
+  transition: all 0.25s ease;
+}
+
+trough {
+  background: @backgroundn;
+  border: 1px solid @border;
+}
+
+image,
+label {
+  background: @backgroundm;
+  color: @accent-bg;
+  padding: 5px;
+  margin: -5px;
+  border: 1px solid @border;
+  text-shadow:
+    -1px -1px 2px @background,
+    1px -1px 2px @background,
+    -1px 1px 2px @background,
+    1px 1px 2px @background;
+  font-family: "Fira Mono Nerd Font";
+  font-size: 14px;
+  font-weight: bold;
+  min-width: 40px;
+  min-height: 40px;
+}
