@@ -63,6 +63,37 @@ I3_PACMAN_PACKAGES=(
 )
 
 # ----------------------------
+# 🔏 Function: Check or Generate a GPG Key
+# ----------------------------
+ensure_gpg_key() {
+    local GPG_LABEL=$1  
+    local GPG_KEY_ID
+    GPG_KEY_ID=$(su -c "gpg --list-secret-keys --keyid-format=long | grep 'rsa4096' | awk '{print \$2}' | cut -d'/' -f2 | head -n 1" $USERNAME)
+
+    if [[ ! -n "$GPG_KEY_ID" ]]; then
+        read -p "No GPG key found for $GPG_LABEL. Would you like to generate one? (y/n): " GPG_CHOICE
+        if [[ "$GPG_CHOICE" == "y" || "$GPG_CHOICE" == "Y" ]]; then
+            echo "🔏 Generating GPG key for $GPG_LABEL..."
+            su -c "gpg --batch --gen-key" $USERNAME <<EOF
+            Key-Type: RSA
+            Key-Length: 4096
+            Name-Real: $GIT_NAME
+            Name-Email: $GIT_EMAIL
+            Expire-Date: 0
+            %no-protection
+            %commit
+EOF
+            GPG_KEY_ID=$(su -c "gpg --list-secret-keys --keyid-format=long | grep 'rsa4096' | awk '{print \$2}' | cut -d'/' -f2 | head -n 1" $USERNAME)
+            echo "✅ GPG key created: $GPG_KEY_ID for $GPG_LABEL"
+        else
+            echo "⚠️ Skipping GPG key generation for $GPG_LABEL."
+        fi
+    fi
+
+    echo "$GPG_KEY_ID"
+}
+
+# ----------------------------
 # 🔄 System Update
 # ----------------------------
 echo "🔄 Updating system packages..."
@@ -194,27 +225,13 @@ else
 fi
 
 # ----------------------------
-# 🔏 GPG Key Setup for GitHub (Prompt)
+# 🔏 GPG Key Setup for Git Signing
 # ----------------------------
-if ! gpg --list-secret-keys --keyid-format=long | grep -q "sec"; then
-    read -p "Would you like to generate a GPG key for commit signing? (y/n): " GPG_CHOICE
-    if [[ "$GPG_CHOICE" == "y" || "$GPG_CHOICE" == "Y" ]]; then
-        echo "🔏 Generating GPG key..."
-        su -c "gpg --batch --gen-key" $USERNAME <<EOF
-        Key-Type: RSA
-        Key-Length: 4096
-        Name-Real: $GIT_NAME
-        Name-Email: $GIT_EMAIL
-        Expire-Date: 0
-        %no-protection
-        %commit
-EOF
-        echo "✅ GPG key created."
+GPG_KEY_GIT=$(ensure_gpg_key "Git Commit Signing")
 
-        GPG_KEY_ID=$(su -c "gpg --list-secret-keys --keyid-format=long | grep 'rsa4096' | awk '{print \$2}' | cut -d'/' -f2 | head -n 1" $USERNAME)
-
-        echo "🔐 Configuring Git to use GPG key..."
-        cat <<EOF >> "$GITCONFIG_USER"
+if [[ -n "$GPG_KEY_GIT" ]]; then
+    echo "🔐 Configuring Git to use GPG key for signing..."
+    cat <<EOF >> "$GITCONFIG_USER"
 
 [commit]
     gpgSign = true
@@ -223,22 +240,17 @@ EOF
     program = gpg
 
 [user]
-    signingKey = $GPG_KEY_ID
+    signingKey = $GPG_KEY_GIT
 EOF
 
-        chown $USERNAME:$USERNAME "$GITCONFIG_USER"
+    chown $USERNAME:$USERNAME "$GITCONFIG_USER"
 
-        echo "📜 Copy this GPG key and add it to GitHub:"
-        echo "-----------------------------------------"
-        su -c "gpg --armor --export $GPG_KEY_ID" $USERNAME
-        echo "-----------------------------------------"
-        echo "🔗 Go to GitHub: https://github.com/settings/gpg-keys"
-        echo "🔹 Click 'New GPG Key' and paste the above key."
-    else
-        echo "⚠️ Skipping GPG key generation."
-    fi
-else
-    echo "✅ GPG key already exists. Skipping..."
+    echo "📜 Copy this GPG key and add it to GitHub:"
+    echo "-----------------------------------------"
+    su -c "gpg --armor --export $GPG_KEY_GIT" $USERNAME
+    echo "-----------------------------------------"
+    echo "🔗 Go to GitHub: https://github.com/settings/gpg-keys"
+    echo "🔹 Click 'New GPG Key' and paste the above key."
 fi
 
 # ----------------------------
@@ -260,6 +272,34 @@ else
     for dir in $(find . -mindepth 1 -maxdepth 1 -type d); do
         su -c "stow -v $(basename "$dir")" $USERNAME
     done
+fi
+
+# ----------------------------
+# 🌐 Prompt for Brave Browser Installation
+# ----------------------------
+read -p "Would you like to install Brave Browser? (y/n): " BRAVE_CHOICE
+if [[ "$BRAVE_CHOICE" == "y" || "$BRAVE_CHOICE" == "Y" ]]; then
+
+    # ----------------------------
+    # 🔏 GPG Key Setup for Brave
+    # ----------------------------
+    GPG_KEY_BRAVE=$(ensure_gpg_key "Brave Browser Package Verification")
+
+    if [[ -n "$GPG_KEY_BRAVE" ]]; then
+        echo "🔑 Using GPG key ($GPG_KEY_BRAVE) for Brave package verification..."
+
+        # Import the user's GPG key for Brave verification
+        su -c "gpg --export $GPG_KEY_BRAVE | sudo pacman-key --add -" $USERNAME
+        su -c "sudo pacman-key --lsign-key $GPG_KEY_BRAVE" $USERNAME
+    else
+        echo "⚠️ Brave requires a GPG key, but none was generated. Installation may fail."
+    fi
+
+    echo "🌍 Installing Brave Browser..."
+    su -c "yay -S --noconfirm brave-bin" $USERNAME
+    echo "✅ Brave Browser installed successfully."
+else
+    echo "⚠️ Skipping Brave Browser installation."
 fi
 
 # ----------------------------
