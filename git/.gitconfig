@@ -1,8 +1,5 @@
 [include]
-        path = ~/.gitconfig-override
-[user]
-        name = Jacob Söderblom
-        email = jacob.soderblom@protonmail.com
+        path = ~/.gitconfig-user
 [column]
         ui = auto
 [branch]

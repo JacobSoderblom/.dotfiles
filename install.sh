@@ -5,9 +5,6 @@
 # ============================
 # Installs system packages, detects the desktop environment, 
 # updates all installed packages, installs yay, and stows dotfiles.
-#
-# Author: Jacob Soderblom
-# Version: 2.7 (Final)
 # ----------------------------
 
 set -e  # Exit script immediately on error
@@ -17,6 +14,8 @@ set -e  # Exit script immediately on error
 # ----------------------------
 DOTFILES_REPO="https://github.com/JacobSoderblom/.dotfiles.git"
 DOTFILES_DIR="$HOME/.dotfiles"
+GITCONFIG_USER="$HOME/.gitconfig-user"
+SSH_KEY="$HOME/.ssh/id_ed25519"
 
 # ----------------------------
 # 🔍 Ensure script is run as sudo
@@ -150,6 +149,99 @@ if [[ "$(getent passwd $USERNAME | cut -d: -f7)" != "$(which zsh)" ]]; then
 fi
 
 # ----------------------------
+# ✏️ Prompt User for Git Name and Email
+# ----------------------------
+if [[ ! -f "$GITCONFIG_USER" ]]; then
+    echo "📜 Setting up your Git identity..."
+    read -p "Enter your Git name: " GIT_NAME
+    read -p "Enter your Git email: " GIT_EMAIL
+
+    cat <<EOF > "$GITCONFIG_USER"
+[user]
+    name = $GIT_NAME
+    email = $GIT_EMAIL
+EOF
+
+    chown $USERNAME:$USERNAME "$GITCONFIG_USER"
+    echo "✅ Git identity saved to $GITCONFIG_USER"
+else
+    echo "✅ Git identity already set. Skipping..."
+    GIT_NAME=$(git config --global user.name)
+    GIT_EMAIL=$(git config --global user.email)
+fi
+
+# ----------------------------
+# 🔑 SSH Key Setup for GitHub (Prompt)
+# ----------------------------
+if [[ ! -f "$SSH_KEY" ]]; then
+    read -p "Would you like to generate an SSH key for GitHub? (y/n): " SSH_CHOICE
+    if [[ "$SSH_CHOICE" == "y" || "$SSH_CHOICE" == "Y" ]]; then
+        echo "🔑 Generating SSH key..."
+        su -c "ssh-keygen -t ed25519 -C \"$GIT_EMAIL\" -f \"$SSH_KEY\" -N \"\"" $USERNAME
+        echo "✅ SSH key created at $SSH_KEY"
+
+        echo "📜 Copy this SSH key and add it to GitHub:"
+        echo "-----------------------------------------"
+        su -c "cat $SSH_KEY.pub" $USERNAME
+        echo "-----------------------------------------"
+        echo "🔗 Go to GitHub: https://github.com/settings/keys"
+        echo "🔹 Click 'New SSH Key' and paste the above key."
+    else
+        echo "⚠️ Skipping SSH key generation."
+    fi
+else
+    echo "✅ SSH key already exists. Skipping..."
+fi
+
+# ----------------------------
+# 🔏 GPG Key Setup for GitHub (Prompt)
+# ----------------------------
+if ! gpg --list-secret-keys --keyid-format=long | grep -q "sec"; then
+    read -p "Would you like to generate a GPG key for commit signing? (y/n): " GPG_CHOICE
+    if [[ "$GPG_CHOICE" == "y" || "$GPG_CHOICE" == "Y" ]]; then
+        echo "🔏 Generating GPG key..."
+        su -c "gpg --batch --gen-key" $USERNAME <<EOF
+        Key-Type: RSA
+        Key-Length: 4096
+        Name-Real: $GIT_NAME
+        Name-Email: $GIT_EMAIL
+        Expire-Date: 0
+        %no-protection
+        %commit
+EOF
+        echo "✅ GPG key created."
+
+        GPG_KEY_ID=$(su -c "gpg --list-secret-keys --keyid-format=long | grep 'rsa4096' | awk '{print \$2}' | cut -d'/' -f2 | head -n 1" $USERNAME)
+
+        echo "🔐 Configuring Git to use GPG key..."
+        cat <<EOF >> "$GITCONFIG_USER"
+
+[commit]
+    gpgSign = true
+
+[gpg]
+    program = gpg
+
+[user]
+    signingKey = $GPG_KEY_ID
+EOF
+
+        chown $USERNAME:$USERNAME "$GITCONFIG_USER"
+
+        echo "📜 Copy this GPG key and add it to GitHub:"
+        echo "-----------------------------------------"
+        su -c "gpg --armor --export $GPG_KEY_ID" $USERNAME
+        echo "-----------------------------------------"
+        echo "🔗 Go to GitHub: https://github.com/settings/gpg-keys"
+        echo "🔹 Click 'New GPG Key' and paste the above key."
+    else
+        echo "⚠️ Skipping GPG key generation."
+    fi
+else
+    echo "✅ GPG key already exists. Skipping..."
+fi
+
+# ----------------------------
 # 📂 Clone and Stow Dotfiles
 # ----------------------------
 if [[ ! -d "$DOTFILES_DIR" ]]; then
@@ -173,4 +265,6 @@ fi
 # ----------------------------
 # 🎉 Completion
 # ----------------------------
-echo "🎉 Installation & update complete! Please reboot or restart your shell."
+echo "🎉 Setup complete! Please add your SSH and GPG keys to GitHub if you haven't already."
+
+
