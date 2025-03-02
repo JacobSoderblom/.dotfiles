@@ -51,31 +51,49 @@ I3_PACMAN_PACKAGES=(
     xorg-xbacklight i3blocks
 )
 
-# ----------------------------
-# 🔏 Function: Check or Generate a GPG Key
-# ----------------------------
 ensure_gpg_key() {
     local GPG_LABEL=$1  
     local GPG_KEY_ID
-    GPG_KEY_ID=$(su - "$USERNAME" -c "gpg --list-secret-keys --keyid-format=long | grep 'rsa4096' | awk '{print \$2}' | cut -d'/' -f2 | head -n 1")
+    local GPG_KEY_TYPE="rsa4096"  # Set key type explicitly
+
+    # Ensure user identity is set
+    if [[ -z "$GIT_NAME" || -z "$GIT_EMAIL" ]]; then
+        printf "❌ Error: GIT_NAME or GIT_EMAIL is not set. Cannot generate GPG key.\n" >&2
+        return 1
+    fi
+
+    # Try to retrieve existing GPG key
+    GPG_KEY_ID=$(su - "$USERNAME" -c "gpg --list-secret-keys --keyid-format=long" | awk '/^ +/ {print $1}' | grep -E '^[0-9A-F]+' | head -n 1)
 
     if [[ -z "$GPG_KEY_ID" ]]; then
-        read -r -p "No GPG key found for $GPG_LABEL. Would you like to generate one? (y/n): " GPG_CHOICE < /dev/tty
+        read -r -p "No GPG key found for $GPG_LABEL. Generate one? (y/n): " GPG_CHOICE < /dev/tty
         if [[ "$GPG_CHOICE" =~ ^[Yy]$ ]]; then
             printf "🔏 Generating GPG key for %s...\n" "$GPG_LABEL"
-            su - "$USERNAME" -c "gpg --batch --gen-key" <<EOF
-            Key-Type: RSA
-            Key-Length: 4096
-            Name-Real: $GIT_NAME
-            Name-Email: $GIT_EMAIL
-            Expire-Date: 0
-            %no-protection
-            %commit
+
+            su - "$USERNAME" bash -c "gpg --batch --gen-key" <<EOF
+                %echo Generating a GPG key for $GPG_LABEL
+                Key-Type: RSA
+                Key-Length: 4096
+                Name-Real: $GIT_NAME
+                Name-Email: $GIT_EMAIL
+                Expire-Date: 0
+                %no-protection
+                %commit
+                %echo Done
 EOF
-            GPG_KEY_ID=$(su - "$USERNAME" -c "gpg --list-secret-keys --keyid-format=long | grep 'rsa4096' | awk '{print \$2}' | cut -d'/' -f2 | head -n 1")
-            printf "✅ GPG key created: %s for %s\n" "$GPG_KEY_ID" "$GPG_LABEL"
+
+            # Re-fetch generated key
+            GPG_KEY_ID=$(su - "$USERNAME" -c "gpg --list-secret-keys --keyid-format=long" | awk '/^ +/ {print $1}' | grep -E '^[0-9A-F]+' | head -n 1)
+
+            if [[ -n "$GPG_KEY_ID" ]]; then
+                printf "✅ GPG key created: %s for %s\n" "$GPG_KEY_ID" "$GPG_LABEL"
+            else
+                printf "❌ Error: GPG key creation failed!\n" >&2
+                return 1
+            fi
         else
             printf "⚠️ Skipping GPG key generation for %s.\n" "$GPG_LABEL"
+            return 1
         fi
     fi
 
