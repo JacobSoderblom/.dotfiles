@@ -197,20 +197,24 @@ if [[ "$(getent passwd $USERNAME | cut -d: -f7)" != "$(which zsh)" ]]; then
 fi
 
 # ----------------------------
-# ✏️ Prompt User for Git Name and Email
+# ✏️ Ensure .gitconfig-user Exists & Prompt for Git Name and Email
 # ----------------------------
 if [[ ! -f "$GITCONFIG_USER" ]]; then
     echo "📜 Setting up your Git identity..."
+    
+    # Prompt the user for Git name and email
     read -p "Enter your Git name: " GIT_NAME
     read -p "Enter your Git email: " GIT_EMAIL
 
-    cat <<EOF > "$GITCONFIG_USER"
+    # Ensure the file exists and write the user data
+    sudo -u "$USERNAME" touch "$GITCONFIG_USER"
+    sudo -u "$USERNAME" bash -c "cat <<EOF > '$GITCONFIG_USER'
 [user]
     name = $GIT_NAME
     email = $GIT_EMAIL
-EOF
+EOF"
 
-    chown $USERNAME:$USERNAME "$GITCONFIG_USER"
+    chown "$USERNAME:$USERNAME" "$GITCONFIG_USER"
     echo "✅ Git identity saved to $GITCONFIG_USER"
 else
     echo "✅ Git identity already set. Skipping..."
