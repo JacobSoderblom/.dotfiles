@@ -246,13 +246,16 @@ else
 fi
 
 # ----------------------------
-# 🔏 GPG Key Setup for Git Signing
+# 🔏 GPG Key Setup for Git Signing (Ask User)
 # ----------------------------
 GPG_KEY_GIT=$(ensure_gpg_key "Git Commit Signing")
 
 if [[ -n "$GPG_KEY_GIT" ]]; then
-    echo "🔐 Configuring Git to use GPG key for signing..."
-    cat <<EOF >> "$GITCONFIG_USER"
+    read -p "Would you like to use GPG for signing Git commits? (y/n): " ADD_GPG_TO_GIT
+
+    if [[ "$ADD_GPG_TO_GIT" == "y" || "$ADD_GPG_TO_GIT" == "Y" ]]; then
+        echo "🔐 Configuring Git to use GPG key for signing..."
+        cat <<EOF >> "$GITCONFIG_USER"
 
 [commit]
     gpgSign = true
@@ -264,14 +267,17 @@ if [[ -n "$GPG_KEY_GIT" ]]; then
     signingKey = $GPG_KEY_GIT
 EOF
 
-    chown $USERNAME:$USERNAME "$GITCONFIG_USER"
+        chown "$USERNAME:$USERNAME" "$GITCONFIG_USER"
 
-    echo "📜 Copy this GPG key and add it to GitHub:"
-    echo "-----------------------------------------"
-    su -c "gpg --armor --export $GPG_KEY_GIT" $USERNAME
-    echo "-----------------------------------------"
-    echo "🔗 Go to GitHub: https://github.com/settings/gpg-keys"
-    echo "🔹 Click 'New GPG Key' and paste the above key."
+        echo "📜 To retrieve your GPG key, run the following command:"
+        echo "----------------------------------------------------"
+        echo "gpg --armor --export $GPG_KEY_GIT"
+        echo "----------------------------------------------------"
+        echo "🔗 Go to GitHub: https://github.com/settings/gpg-keys"
+        echo "🔹 Click 'New GPG Key' and paste the output of the above command."
+    else
+        echo "⚠️ Skipping GPG signing configuration in Git."
+    fi
 fi
 
 # ----------------------------
