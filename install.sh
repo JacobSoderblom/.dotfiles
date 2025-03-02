@@ -179,13 +179,15 @@ fi
 # ----------------------------
 # ⚡ Install or Update Oh My Zsh (Only If Not Installed)
 # ----------------------------
-if [[ ! -d "/home/$USERNAME/.oh-my-zsh" ]]; then
+if sudo -i -u "$USERNAME" command -v omz &>/dev/null; then
+    echo "✅ Oh My Zsh is already installed. Updating..."
+    sudo -i -u "$USERNAME" omz update
+elif [[ ! -d "/home/$USERNAME/.oh-my-zsh" ]]; then
     echo "⚡ Installing Oh My Zsh..."
     sudo -i -u "$USERNAME" sh -c 'curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash --unattended'
     echo "✅ Oh My Zsh installed successfully."
 else
-    echo "✅ Oh My Zsh is already installed. Updating..."
-    sudo -i -u "$USERNAME" omz update
+    echo "⚠️ Oh My Zsh folder exists but command is missing. Skipping installation."
 fi
 
 # ----------------------------
