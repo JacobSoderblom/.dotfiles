@@ -32,6 +32,7 @@ BASE_PACMAN_PACKAGES=(
 
 # 🌐 Base AUR Packages
 BASE_AUR_PACKAGES=(
+    1password
 )
 
 # 🌐 Hyprland Packages (Official)
