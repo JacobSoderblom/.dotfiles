@@ -113,17 +113,19 @@ if ! command -v yay &>/dev/null; then
     pacman -S --needed --noconfirm base-devel git
     rm -rf /tmp/yay-bin
 
-    sudo -u $USERNAME bash -c "
-        cd /tmp &&
-        git clone https://aur.archlinux.org/yay-bin.git yay-bin &&
-        cd yay-bin &&
-        makepkg -si --noconfirm --needed &&
-        cd ~ &&
+    # Run the installation as the normal user
+    sudo -i -u $USERNAME bash <<EOF
+        cd /tmp
+        git clone https://aur.archlinux.org/yay-bin.git yay-bin
+        cd yay-bin
+        makepkg -si --noconfirm --needed
+        cd ~
         rm -rf /tmp/yay-bin
-    "
+EOF
+
 else
     echo "✅ Yay is already installed. Updating yay..."
-    sudo -u $USERNAME yay -Syu --noconfirm
+    sudo -i -u $USERNAME yay -Syu --noconfirm
 fi
 
 # ----------------------------
