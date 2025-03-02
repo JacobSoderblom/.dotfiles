@@ -181,10 +181,7 @@ fi
 # ----------------------------
 OH_MY_ZSH_DIR="/home/$USERNAME/.oh-my-zsh"
 
-if [[ -d "$OH_MY_ZSH_DIR" ]]; then
-    echo "✅ Oh My Zsh is already installed. Updating..."
-    sudo -i -u "$USERNAME" zsh -c "source ~/.zshrc && omz update"
-elif [[ ! -d "$OH_MY_ZSH_DIR" ]]; then
+if [[ ! -d "$OH_MY_ZSH_DIR" ]]; then
     echo "⚡ Installing Oh My Zsh..."
     sudo -i -u "$USERNAME" sh -c 'curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash --unattended'
     echo "✅ Oh My Zsh installed successfully."
