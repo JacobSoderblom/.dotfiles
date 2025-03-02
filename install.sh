@@ -180,19 +180,17 @@ fi
 # ⚡ Install or Update Oh My Zsh (Only If Not Installed)
 # ----------------------------
 OH_MY_ZSH_DIR="/home/$USERNAME/.oh-my-zsh"
-ZSHRC_FILE="/home/$USERNAME/.zshrc"
 
-if [[ -d "$OH_MY_ZSH_DIR" && -f "$ZSHRC_FILE" && $(grep -q "oh-my-zsh.sh" "$ZSHRC_FILE" && echo 1) ]]; then
+if [[ -d "$OH_MY_ZSH_DIR" ]]; then
     echo "✅ Oh My Zsh is already installed. Updating..."
-    sudo -i -u "$USERNAME" zsh -c "omz update"
+    sudo -i -u "$USERNAME" zsh -c "source ~/.zshrc && omz update"
 elif [[ ! -d "$OH_MY_ZSH_DIR" ]]; then
     echo "⚡ Installing Oh My Zsh..."
     sudo -i -u "$USERNAME" sh -c 'curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash --unattended'
     echo "✅ Oh My Zsh installed successfully."
 else
-    echo "⚠️ Oh My Zsh directory exists but is not properly set up in ~/.zshrc. Skipping installation."
+    echo "⚠️ Oh My Zsh directory exists but is not properly set up. Skipping installation."
 fi
-
 
 # ----------------------------
 # 🛠️ Set Zsh as Default Shell
