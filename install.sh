@@ -110,12 +110,19 @@ pacman -S --noconfirm --needed "${BASE_PACMAN_PACKAGES[@]}"
 # ----------------------------
 if ! command -v yay &>/dev/null; then
     echo "📥 Installing yay (AUR package manager)..."
-    pacman -S --needed --noconfirm base-devel
+    pacman -S --needed --noconfirm base-devel git
     rm -rf /tmp/yay-bin
-    su -c "git clone https://aur.archlinux.org/yay-bin.git /tmp/yay-bin && cd /tmp/yay-bin && makepkg -si --noconfirm && rm -rf /tmp/yay-bin" $USERNAME
+
+    sudo -u $USERNAME bash -c "
+        git clone https://aur.archlinux.org/yay-bin.git /tmp/yay-bin &&
+        cd /tmp/yay-bin &&
+        yes | makepkg -si --noconfirm --ask 2>/dev/null &&
+        cd ~ &&
+        rm -rf /tmp/yay-bin
+    "
 else
     echo "✅ Yay is already installed. Updating yay..."
-    su -c "yay -Syu --noconfirm" $USERNAME
+    sudo -u $USERNAME yay -Syu --noconfirm
 fi
 
 # ----------------------------
