@@ -166,19 +166,26 @@ if [[ ${#AUR_PACKAGES[@]} -gt 0 ]]; then
 fi
 
 # ----------------------------
-# 🦀 Install Rust via Official Installer
+# 🦀 Install Rust (Only If Not Installed)
 # ----------------------------
-echo "🦀 Installing Rust..."
-su -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y' $USERNAME
-su -c 'source $HOME/.cargo/env' $USERNAME
+if ! sudo -i -u "$USERNAME" command -v rustc &>/dev/null; then
+    echo "🦀 Installing Rust..."
+    sudo -i -u "$USERNAME" bash -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y'
+    echo "✅ Rust installed successfully."
+else
+    echo "✅ Rust is already installed. Skipping installation."
+fi
 
 # ----------------------------
-# ⚡ Install or Update Oh My Zsh
+# ⚡ Install or Update Oh My Zsh (Only If Not Installed)
 # ----------------------------
-if [[ ! -d "~/.oh-my-zsh" ]]; then
-    su -c 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended' $USERNAME
+if [[ ! -d "/home/$USERNAME/.oh-my-zsh" ]]; then
+    echo "⚡ Installing Oh My Zsh..."
+    sudo -i -u "$USERNAME" sh -c 'curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash --unattended'
+    echo "✅ Oh My Zsh installed successfully."
 else
-    su -c "omz update" $USERNAME
+    echo "✅ Oh My Zsh is already installed. Updating..."
+    sudo -i -u "$USERNAME" omz update
 fi
 
 # ----------------------------
