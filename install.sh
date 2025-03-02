@@ -291,7 +291,7 @@ if [ -z "$(find . -mindepth 1 -maxdepth 1 -type d)" ]; then
     echo "⚠️ No directories found to stow. Skipping..."
 else
     for dir in $(find . -mindepth 1 -maxdepth 1 -type d); do
-        su -c "stow -v $(basename "$dir")" $USERNAME
+        su -c "stow -R -v --delete $(basename "$dir")" $USERNAME
     done
 fi
 
