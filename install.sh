@@ -7,14 +7,6 @@
 # updates all installed packages, installs yay, and stows dotfiles.
 # ----------------------------
 
-# ----------------------------
-# 🔍 Ensure script is run as sudo
-# ----------------------------
-if [[ $EUID -ne 0 ]]; then
-    echo "❌ Please run this script with sudo." >&2
-    exit 1
-fi
-
 USERNAME=$(id -un 1000 2>/dev/null || logname)  # Get real username if run as root
 
 # ----------------------------
