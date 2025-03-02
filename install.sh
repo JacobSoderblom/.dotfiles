@@ -126,6 +126,30 @@ else
 fi
 
 # ----------------------------
+# 📂 Clone and Stow Dotfiles
+# ----------------------------
+if [[ ! -d "$DOTFILES_DIR" ]]; then
+    echo "📥 Cloning dotfiles from $DOTFILES_REPO..."
+    su -c "git clone $DOTFILES_REPO $DOTFILES_DIR" $USERNAME || { echo "❌ Failed to clone dotfiles! Exiting..."; exit 1; }
+
+    # Ensure correct user ownership
+    chown -R $USERNAME:$USERNAME "$DOTFILES_DIR"
+    
+    cd "$DOTFILES_DIR"
+
+    if [ -z "$(find . -mindepth 1 -maxdepth 1 -type d)" ]; then
+        echo "⚠️ No directories found to stow. Skipping..."
+    else
+        echo "🔄 Stowing dotfiles (forcing overwrite of conflicts)..."
+        for dir in $(find . -mindepth 1 -maxdepth 1 -type d); do
+            echo "🔗 Applying $(basename "$dir")..."
+            sudo -u "$USERNAME" stow -R -v "$(basename "$dir")"  # Then, force reapply stow
+        done
+        echo "✅ Dotfiles successfully applied."
+    fi
+fi
+
+# ----------------------------
 # 🌍 Detect Desktop Environment
 # ----------------------------
 if pgrep -x "Hyprland" >/dev/null; then
@@ -246,11 +270,11 @@ fi
 # ----------------------------
 # 🔏 GPG Key Setup for Git Signing (Ask User)
 # ----------------------------
-GPG_KEY_GIT=$(ensure_gpg_key "Git Commit Signing")
 
-if [[ -n "$GPG_KEY_GIT" ]]; then
+if [[ -z "$GPG_KEY_GIT" ]]; then
     read -r -p "Would you like to use GPG for signing Git commits? (y/n): " ADD_GPG_TO_GIT
     if [[ "$ADD_GPG_TO_GIT" =~ ^[Yy]$ ]]; then
+        GPG_KEY_GIT=$(ensure_gpg_key "Git Commit Signing")
         printf "🔐 Configuring Git to use GPG key for signing...\n"
         cat <<EOF >> "/home/$USERNAME/.gitconfig-user"
 
@@ -275,32 +299,6 @@ EOF
     else
         printf "⚠️ Skipping GPG signing configuration in Git.\n"
     fi
-fi
-
-# ----------------------------
-# 📂 Clone and Stow Dotfiles
-# ----------------------------
-if [[ ! -d "$DOTFILES_DIR" ]]; then
-    echo "📥 Cloning dotfiles from $DOTFILES_REPO..."
-    su -c "git clone $DOTFILES_REPO $DOTFILES_DIR" $USERNAME || { echo "❌ Failed to clone dotfiles! Exiting..."; exit 1; }
-fi
-
-# Ensure correct user ownership
-chown -R $USERNAME:$USERNAME "$DOTFILES_DIR"
-
-cd "$DOTFILES_DIR"
-
-if [ -z "$(find . -mindepth 1 -maxdepth 1 -type d)" ]; then
-    echo "⚠️ No directories found to stow. Skipping..."
-else
-    echo "🔄 Stowing dotfiles (forcing overwrite of conflicts)..."
-    for dir in $(find . -mindepth 1 -maxdepth 1 -type d); do
-        echo "🗑️ Removing conflicting files for $(basename "$dir")..."
-        sudo -u "$USERNAME" stow -D "$(basename "$dir")"  # First, remove existing conflicting symlinks/files
-        echo "🔗 Applying $(basename "$dir")..."
-        sudo -u "$USERNAME" stow -R -v "$(basename "$dir")"  # Then, force reapply stow
-    done
-    echo "✅ Dotfiles successfully applied."
 fi
 
 # ----------------------------
