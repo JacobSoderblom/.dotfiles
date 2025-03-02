@@ -296,9 +296,14 @@ cd "$DOTFILES_DIR"
 if [ -z "$(find . -mindepth 1 -maxdepth 1 -type d)" ]; then
     echo "⚠️ No directories found to stow. Skipping..."
 else
+    echo "🔄 Stowing dotfiles (forcing overwrite of conflicts)..."
     for dir in $(find . -mindepth 1 -maxdepth 1 -type d); do
-        su -c "stow -R -v --delete $(basename "$dir")" $USERNAME
+        echo "🗑️ Removing conflicting files for $(basename "$dir")..."
+        sudo -u "$USERNAME" stow -D "$(basename "$dir")"  # First, remove existing conflicting symlinks/files
+        echo "🔗 Applying $(basename "$dir")..."
+        sudo -u "$USERNAME" stow -R -v "$(basename "$dir")"  # Then, force reapply stow
     done
+    echo "✅ Dotfiles successfully applied."
 fi
 
 # ----------------------------
