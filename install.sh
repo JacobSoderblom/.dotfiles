@@ -114,9 +114,10 @@ if ! command -v yay &>/dev/null; then
     rm -rf /tmp/yay-bin
 
     sudo -u $USERNAME bash -c "
-        git clone https://aur.archlinux.org/yay-bin.git /tmp/yay-bin &&
-        cd /tmp/yay-bin &&
-        yes | makepkg -si --noconfirm --ask 2>/dev/null &&
+        cd /tmp &&
+        git clone https://aur.archlinux.org/yay-bin.git yay-bin &&
+        cd yay-bin &&
+        makepkg -si --noconfirm --needed &&
         cd ~ &&
         rm -rf /tmp/yay-bin
     "
