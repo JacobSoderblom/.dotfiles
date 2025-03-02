@@ -10,14 +10,6 @@
 set -e  # Exit script immediately on error
 
 # ----------------------------
-# 📂 Configuration
-# ----------------------------
-DOTFILES_REPO="https://github.com/JacobSoderblom/.dotfiles.git"
-DOTFILES_DIR="~/.dotfiles"
-GITCONFIG_USER="~/.gitconfig-user"
-SSH_KEY="~/.ssh/id_ed25519"
-
-# ----------------------------
 # 🔍 Ensure script is run as sudo
 # ----------------------------
 if [[ $EUID -ne 0 ]]; then
@@ -26,6 +18,14 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 USERNAME=$(id -un 1000 2>/dev/null || logname)  # Get real username if run as root
+
+# ----------------------------
+# 📂 Configuration
+# ----------------------------
+DOTFILES_REPO="https://github.com/JacobSoderblom/.dotfiles.git"
+DOTFILES_DIR="/home/$USERNAME/.dotfiles"
+GITCONFIG_USER="/home/$USERNAME/.gitconfig-user"
+SSH_KEY="/home/$USERNAME/.ssh/id_ed25519"
 
 # ----------------------------
 # 📦 Package Lists (Easily Editable)
