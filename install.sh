@@ -25,7 +25,7 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-USERNAME=${SUDO_USER:-$(logname)}  # Get real username if run as root
+USERNAME=$(id -un 1000 2>/dev/null || logname)  # Get real username if run as root
 
 # ----------------------------
 # 📦 Package Lists (Easily Editable)
