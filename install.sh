@@ -7,8 +7,6 @@
 # updates all installed packages, installs yay, and stows dotfiles.
 # ----------------------------
 
-set -e  # Exit script immediately on error
-
 # ----------------------------
 # 🔍 Ensure script is run as sudo
 # ----------------------------
@@ -67,13 +65,13 @@ I3_PACMAN_PACKAGES=(
 ensure_gpg_key() {
     local GPG_LABEL=$1  
     local GPG_KEY_ID
-    GPG_KEY_ID=$(su -c "gpg --list-secret-keys --keyid-format=long | grep 'rsa4096' | awk '{print \$2}' | cut -d'/' -f2 | head -n 1" $USERNAME)
+    GPG_KEY_ID=$(su - "$USERNAME" -c "gpg --list-secret-keys --keyid-format=long | grep 'rsa4096' | awk '{print \$2}' | cut -d'/' -f2 | head -n 1")
 
-    if [[ ! -n "$GPG_KEY_ID" ]]; then
-        read -p "No GPG key found for $GPG_LABEL. Would you like to generate one? (y/n): " GPG_CHOICE
-        if [[ "$GPG_CHOICE" == "y" || "$GPG_CHOICE" == "Y" ]]; then
-            echo "🔏 Generating GPG key for $GPG_LABEL..."
-            su -c "gpg --batch --gen-key" $USERNAME <<EOF
+    if [[ -z "$GPG_KEY_ID" ]]; then
+        read -r -p "No GPG key found for $GPG_LABEL. Would you like to generate one? (y/n): " GPG_CHOICE
+        if [[ "$GPG_CHOICE" =~ ^[Yy]$ ]]; then
+            printf "🔏 Generating GPG key for %s...\n" "$GPG_LABEL"
+            su - "$USERNAME" -c "gpg --batch --gen-key" <<EOF
             Key-Type: RSA
             Key-Length: 4096
             Name-Real: $GIT_NAME
@@ -82,10 +80,10 @@ ensure_gpg_key() {
             %no-protection
             %commit
 EOF
-            GPG_KEY_ID=$(su -c "gpg --list-secret-keys --keyid-format=long | grep 'rsa4096' | awk '{print \$2}' | cut -d'/' -f2 | head -n 1" $USERNAME)
-            echo "✅ GPG key created: $GPG_KEY_ID for $GPG_LABEL"
+            GPG_KEY_ID=$(su - "$USERNAME" -c "gpg --list-secret-keys --keyid-format=long | grep 'rsa4096' | awk '{print \$2}' | cut -d'/' -f2 | head -n 1")
+            printf "✅ GPG key created: %s for %s\n" "$GPG_KEY_ID" "$GPG_LABEL"
         else
-            echo "⚠️ Skipping GPG key generation for $GPG_LABEL."
+            printf "⚠️ Skipping GPG key generation for %s.\n" "$GPG_LABEL"
         fi
     fi
 
@@ -251,11 +249,10 @@ fi
 GPG_KEY_GIT=$(ensure_gpg_key "Git Commit Signing")
 
 if [[ -n "$GPG_KEY_GIT" ]]; then
-    read -p "Would you like to use GPG for signing Git commits? (y/n): " ADD_GPG_TO_GIT
-
-    if [[ "$ADD_GPG_TO_GIT" == "y" || "$ADD_GPG_TO_GIT" == "Y" ]]; then
-        echo "🔐 Configuring Git to use GPG key for signing..."
-        cat <<EOF >> "$GITCONFIG_USER"
+    read -r -p "Would you like to use GPG for signing Git commits? (y/n): " ADD_GPG_TO_GIT
+    if [[ "$ADD_GPG_TO_GIT" =~ ^[Yy]$ ]]; then
+        printf "🔐 Configuring Git to use GPG key for signing...\n"
+        cat <<EOF >> "/home/$USERNAME/.gitconfig-user"
 
 [commit]
     gpgSign = true
@@ -267,16 +264,16 @@ if [[ -n "$GPG_KEY_GIT" ]]; then
     signingKey = $GPG_KEY_GIT
 EOF
 
-        chown "$USERNAME:$USERNAME" "$GITCONFIG_USER"
+        chown "$USERNAME:$USERNAME" "/home/$USERNAME/.gitconfig-user"
 
-        echo "📜 To retrieve your GPG key, run the following command:"
-        echo "----------------------------------------------------"
-        echo "gpg --armor --export $GPG_KEY_GIT"
-        echo "----------------------------------------------------"
-        echo "🔗 Go to GitHub: https://github.com/settings/gpg-keys"
-        echo "🔹 Click 'New GPG Key' and paste the output of the above command."
+        printf "📜 To retrieve your GPG key, run the following command:\n"
+        printf "----------------------------------------------------\n"
+        printf "gpg --armor --export %s\n" "$GPG_KEY_GIT"
+        printf "----------------------------------------------------\n"
+        printf "🔗 Go to GitHub: https://github.com/settings/gpg-keys\n"
+        printf "🔹 Click 'New GPG Key' and paste the output of the above command.\n"
     else
-        echo "⚠️ Skipping GPG signing configuration in Git."
+        printf "⚠️ Skipping GPG signing configuration in Git.\n"
     fi
 fi
 
