@@ -175,7 +175,7 @@ su -c 'source $HOME/.cargo/env' $USERNAME
 # ----------------------------
 # ⚡ Install or Update Oh My Zsh
 # ----------------------------
-if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+if [[ ! -d "~/.oh-my-zsh" ]]; then
     su -c 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended' $USERNAME
 else
     su -c "omz update" $USERNAME
