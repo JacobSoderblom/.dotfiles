@@ -60,7 +60,7 @@ ensure_gpg_key() {
     GPG_KEY_ID=$(su - "$USERNAME" -c "gpg --list-secret-keys --keyid-format=long | grep 'rsa4096' | awk '{print \$2}' | cut -d'/' -f2 | head -n 1")
 
     if [[ -z "$GPG_KEY_ID" ]]; then
-        read -r -p "No GPG key found for $GPG_LABEL. Would you like to generate one? (y/n): " GPG_CHOICE
+        read -r -p "No GPG key found for $GPG_LABEL. Would you like to generate one? (y/n): " GPG_CHOICE < /dev/tty
         if [[ "$GPG_CHOICE" =~ ^[Yy]$ ]]; then
             printf "🔏 Generating GPG key for %s...\n" "$GPG_LABEL"
             su - "$USERNAME" -c "gpg --batch --gen-key" <<EOF
@@ -217,8 +217,8 @@ if [[ ! -f "$GITCONFIG_USER" ]]; then
     echo "📜 Setting up your Git identity..."
     
     # Prompt the user for Git name and email
-    read -p "Enter your Git name: " GIT_NAME
-    read -p "Enter your Git email: " GIT_EMAIL
+    read -p "Enter your Git name: " GIT_NAME < /dev/tty
+    read -p "Enter your Git email: " GIT_EMAIL < /dev/tty
 
     # Ensure the file exists and write the user data
     sudo -u "$USERNAME" touch "$GITCONFIG_USER"
@@ -264,7 +264,7 @@ fi
 # ----------------------------
 
 if [[ -z "$GPG_KEY_GIT" ]]; then
-    read -r -p "Would you like to use GPG for signing Git commits? (y/n): " ADD_GPG_TO_GIT
+    read -r -p "Would you like to use GPG for signing Git commits? (y/n): " ADD_GPG_TO_GIT < /dev/tty
     if [[ "$ADD_GPG_TO_GIT" =~ ^[Yy]$ ]]; then
         GPG_KEY_GIT=$(ensure_gpg_key "Git Commit Signing")
         printf "🔐 Configuring Git to use GPG key for signing...\n"
@@ -296,7 +296,7 @@ fi
 # ----------------------------
 # 🌐 Prompt for Brave Browser Installation
 # ----------------------------
-read -p "Would you like to install Brave Browser? (y/n): " BRAVE_CHOICE
+read -p "Would you like to install Brave Browser? (y/n): " BRAVE_CHOICE < /dev/tty
 if [[ "$BRAVE_CHOICE" == "y" || "$BRAVE_CHOICE" == "Y" ]]; then
 
     # ----------------------------
@@ -325,5 +325,3 @@ fi
 # 🎉 Completion
 # ----------------------------
 echo "🎉 Setup complete! Please add your SSH and GPG keys to GitHub if you haven't already."
-
-
