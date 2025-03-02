@@ -13,9 +13,9 @@ set -e  # Exit script immediately on error
 # 📂 Configuration
 # ----------------------------
 DOTFILES_REPO="https://github.com/JacobSoderblom/.dotfiles.git"
-DOTFILES_DIR="$HOME/.dotfiles"
-GITCONFIG_USER="$HOME/.gitconfig-user"
-SSH_KEY="$HOME/.ssh/id_ed25519"
+DOTFILES_DIR="~/.dotfiles"
+GITCONFIG_USER="~/.gitconfig-user"
+SSH_KEY="~/.ssh/id_ed25519"
 
 # ----------------------------
 # 🔍 Ensure script is run as sudo
@@ -42,7 +42,6 @@ BASE_PACMAN_PACKAGES=(
 
 # 🌐 Base AUR Packages
 BASE_AUR_PACKAGES=(
-    tmuxifier
 )
 
 # 🌐 Hyprland Packages (Official)
