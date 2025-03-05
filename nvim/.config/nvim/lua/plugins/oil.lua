@@ -1,9 +1,8 @@
-function _G.get_oil_winbar()
+_G.get_oil_winbar = function()
   local dir = require('oil').get_current_dir()
   if dir then
     return vim.fn.fnamemodify(dir, ':~')
   else
-    -- If there is no current directory (e.g. over ssh), just show the buffer name
     return vim.api.nvim_buf_get_name(0)
   end
 end
@@ -15,7 +14,9 @@ return {
     local oil = require 'oil'
     local detail = false
     oil.setup {
-      win_options = {},
+      win_options = {
+        winbar = '%{%v:lua.get_oil_winbar()%}',
+      },
       default_file_explorer = true,
       columns = {
         'icon',
@@ -34,7 +35,7 @@ return {
         },
       },
     }
-    vim.keymap.set('n', '-', oil.toggle_float, {})
+    vim.keymap.set('n', '\\', oil.toggle_float, {})
     -- vim.keymap.set('n', '\\', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
   end,
 }

@@ -1,15 +1,14 @@
 return {
-  "nvim-lualine/lualine.nvim",
+  'nvim-lualine/lualine.nvim',
   config = function()
-    require("lualine").setup({
+    require('lualine').setup {
       options = {
-        theme = "catppuccin-mocha",
         sections = {
           lualine_a = {
             file = 1,
           },
         },
       },
-    })
+    }
   end,
 }
