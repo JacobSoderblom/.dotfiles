@@ -9,7 +9,6 @@ return {
 
       require('catppuccin').setup {
         integrations = {
-          neotree = true,
           mason = true,
           fidget = true,
           dap_ui = true,
