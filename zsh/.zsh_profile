@@ -133,3 +133,10 @@ pnpm_upgrade() {
   fi
 }
 
+if ! grep -q '^fs.inotify.max_user_instances=524288$' /etc/sysctl.conf; then
+  echo "fs.inotify.max_user_instances=524288" | sudo tee -a /etc/sysctl.conf
+  sudo sysctl -p
+else
+  sudo sysctl -p
+fi
+
