@@ -5,17 +5,17 @@ local function add_dotnet_mappings()
     dotnet.secrets()
   end, {})
 
-  vim.keymap.set('n', '<C-t>', function()
+  vim.keymap.set('n', '<leader>dt', function()
     vim.cmd 'Dotnet testrunner'
-  end, { nowait = true })
+  end, { noremap = true, silent = true })
 
-  vim.keymap.set('n', '<C-p>', function()
+  vim.keymap.set('n', '<leader>dp', function()
     dotnet.run_with_profile(true)
-  end, { nowait = true })
+  end, { noremap = true, silent = true })
 
-  vim.keymap.set('n', '<C-b>', function()
+  vim.keymap.set('n', '<leader>db', function()
     dotnet.build_default_quickfix()
-  end, { nowait = true })
+  end, { noremap = true, silent = true })
 end
 
 -- lazy.nvim
