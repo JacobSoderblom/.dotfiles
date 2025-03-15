@@ -9,7 +9,7 @@ return {
 	font_size = 11,
 
 	-- Background opacity
-	window_background_opacity = 0.75,
+	-- window_background_opacity = 0.75,
 
 	-- Window size & padding
 	initial_rows = 35,

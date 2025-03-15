@@ -15,7 +15,7 @@ local function add_dotnet_mappings()
 
   vim.keymap.set('n', '<leader>db', function()
     dotnet.build_default_quickfix()
-  end, { noremap = true, silent = true })
+  end, { noremap = true, silent = true, desc = "Dotnet build" })
 end
 
 -- lazy.nvim

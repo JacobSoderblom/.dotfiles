@@ -1,35 +1,36 @@
 return {
   {
-    'catppuccin/nvim',
-    lazy = false,
-    name = 'catppuccin',
+    "catppuccin/nvim",
     priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'catppuccin-mocha'
 
-      require('catppuccin').setup {
-        integrations = {
-          mason = true,
-          fidget = true,
-          dap_ui = true,
-        },
-        transparent_background = true,
-      }
-    end,
-  },
-  {
-    'f-person/auto-dark-mode.nvim',
     opts = {
-      update_interval = 1000,
-      default = 'dark',
-      set_dark_mode = function()
-        vim.api.nvim_set_option_value('background', 'dark', {})
-        vim.cmd 'colorscheme catppuccin-mocha'
-      end,
-      set_light_mode = function()
-        vim.api.nvim_set_option_value('background', 'light', {})
-        vim.cmd 'colorscheme catppuccin-latte'
-      end,
+      transparent_background = true,
+      dim_inactive = {
+        enabled = false,
+        shade = "dark",
+        percentage = 0.15,
+      },
+      integrations = {
+        cmp = true,
+        dashboard = true,
+        gitsigns = true,
+        leap = true,
+        mason = true,
+        notify = true,
+        treesitter = true,
+        noice = true,
+        nvim_surround = true,
+        snacks = {
+          enabled = true,
+        },
+        which_key = false,
+      },
     },
+
+    config = function(_, opts)
+      require("catppuccin").setup(opts)
+      vim.cmd.colorscheme("catppuccin-frappe")
+    end,
+
   },
 }
