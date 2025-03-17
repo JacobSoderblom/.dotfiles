@@ -35,6 +35,7 @@ return {
       ensure_installed = {
         "bash-language-server", -- Bash LSP
         "lua-language-server",  -- Lua LSP
+        "harper-ls",
       },
     },
   },
@@ -86,6 +87,8 @@ return {
           end
         end,
       }
+
+      require('lspconfig').harper_ls.setup {}
     end,
   },
 
