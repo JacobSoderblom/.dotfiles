@@ -2,6 +2,8 @@ require 'set'
 require 'remap'
 require 'custom_functions'
 require 'auto_commands'
+require 'copy-with-context'
+require 'clipboard'
 
 --==========================[ @LAZY.NVIM_BOOTSTRAP]==========================--
 
@@ -35,7 +37,7 @@ local opts = {
       disabled_plugins = {
         'gzip', -- Allows Neovim to read and write gzip compressed files.
         -- "matchit", -- Enhances the `%` command to jump between {[()]}
-        -- "matchparen", -- Highlights matching {[()]}
+        -- "matchparent", -- Highlights matching {[()]}
         'netrwPlugin', -- File explorer (:Sex, :Vex, :Ex).
         'tarPlugin', -- Adds support for handling tar archives.
         'tohtml', -- Converts a buffer or a part of a buffer to HTML format.
