@@ -147,7 +147,8 @@ return {
         -- 3. Shows Git status for all files in the project
 
         explorer = {
-          focus = false,
+          focus = true,
+          hidden = true,
           layout = {
             layout = {
               -- width = 0.2,       -- fixed percentage width
