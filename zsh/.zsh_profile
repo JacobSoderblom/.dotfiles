@@ -21,26 +21,6 @@ validateYaml() {
     python -c 'import yaml,sys;yaml.safe_load(sys.stdin)' < $1
 }
 
-goSticker() {
-  git config --local core.sshCommand "ssh -F ~/.ssh/sticker-app"
-  git config --local user.email "jacob.soderblom@stickerapp.com"
-}
-
-goGlobalSticker() {
-  git config --global core.sshCommand "ssh -F ~/.ssh/sticker-app"
-  git config --global user.email "jacob.soderblom@stickerapp.com"
-}
-
-goPrivate() {
-  git config --global core.sshCommand "ssh -F ~/.ssh/private"
-  git config --global user.email "jacob.soderblom@protonmail.com"
-}
-
-goPrivateLocal() {
-  git config --local core.sshCommand "ssh -F ~/.ssh/private"
-  git config --local user.email "jacob.soderblom@protonmail.com"
-}
-
 addThrottle() {
     local kbs="kbps"
     echo $kbs
