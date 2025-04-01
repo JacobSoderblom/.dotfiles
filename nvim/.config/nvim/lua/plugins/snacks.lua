@@ -7,6 +7,7 @@ local scroll       = false
 local indent       = false
 local dashboard    = false
 local words        = false
+local explorer     = false
 -- Custom Functions
 local sidebar      = false -- Open explorer on startup
 
@@ -16,16 +17,6 @@ local function toggle_terminal()
   else
     Snacks.terminal.toggle("zsh")
   end
-end
-
-local function quit_with_explorer()
-  local explorer = Snacks.picker.get({ source = "explorer" })
-  if #explorer == 0 then
-    for _, p in pairs(explorer) do
-      p:close()
-    end
-  end
-  vim.cmd("wqa")
 end
 
 return {
@@ -47,67 +38,69 @@ return {
   end,
 
   keys = {
-    -- Top Pickers & Explorer
-    { "<leader><space>", function() Snacks.picker.smart() end,                 desc = "Smart Find Files" },
-    { "<leader>,",       function() Snacks.picker.buffers() end,               desc = "Find: Buffers" },
-    { "<leader>/",       function() Snacks.picker.grep() end,                  desc = "Grep: Files" },
-    { "<leader>:",       function() Snacks.picker.command_history() end,       desc = "Command History" },
-    { "<leader>n",       function() Snacks.picker.notifications() end,         desc = "Notification History" },
-    { "<leader>\\",      function() Snacks.explorer() end,                     desc = "File Explorer (Side)" },
-    -- find
-    { "<leader>ff",      function() Snacks.picker.files() end,                 desc = "Find: Files" },
-    { "<leader>fb",      function() Snacks.picker.buffers() end,               desc = "Find: Buffers" },
-    { "<leader>fg",      function() Snacks.picker.git_files() end,             desc = "Find: Git Files" },
-    { "<leader>fp",      function() Snacks.picker.projects() end,              desc = "Find: Projects" },
-    { "<leader>fr",      function() Snacks.picker.recent() end,                desc = "Find: Recent" },
-    -- Grep
-    { "<leader>gg",      function() Snacks.picker.grep() end,                  desc = "Grep: Files" },
-    { "<leader>sf",      function() Snacks.picker.grep() end,                  desc = "Grep: Files" },
-    { "<leader>sb",      function() Snacks.picker.lines() end,                 desc = "Grep: Buffer Lines" },
-    { "<leader>sB",      function() Snacks.picker.grep_buffers() end,          desc = "Grep: Open Buffers" },
-    { "<leader>sw",      function() Snacks.picker.grep_word() end,             desc = "Grep: Word" },
-    { "<leader>su",      function() Snacks.picker.undo() end,                  desc = "Grep: Undo Tree" },
-    -- git
-    { "<leader>gc",      function() Snacks.lazygit.open() end,                 desc = "Git: LazyGit (Commit)" },
-    { "<leader>gb",      function() Snacks.picker.git_branches() end,          desc = "Git: Branches" },
-    { "<leader>gl",      function() Snacks.picker.git_log() end,               desc = "Git: Log" },
-    { "<leader>gs",      function() Snacks.picker.git_status() end,            desc = "Git: Status" },
-    { "<leader>gd",      function() Snacks.picker.git_diff() end,              desc = "Git: Diff (Hunks)" },
-    -- lsp
-    { "gd",              function() Snacks.picker.lsp_definitions() end,       desc = "LSP: Goto Definition" },
-    { "gD",              function() Snacks.picker.lsp_declarations() end,      desc = "LSP: Goto Declaration" },
-    { "gr",              function() Snacks.picker.lsp_references() end,        desc = "LSP: References" },
-    { "gI",              function() Snacks.picker.lsp_implementations() end,   desc = "LSP: Goto Implementation" },
-    { "gy",              function() Snacks.picker.lsp_type_definitions() end,  desc = "LSP: Goto T[y]pe Definition" },
-    { "<leader>ss",      function() Snacks.picker.lsp_symbols() end,           desc = "LSP: Symbols" },
-    { "<leader>sS",      function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP: Workspace Symbols" },
-    -- buffer
-    -- Snacks.bufdelete keeps the split open but delete the buffer (:bd is better for my workflow)
-    -- But Snacks.bufdelete is needed for not affecting the explorer as it is technically a split buffer
-    { "<leader>x",       function() Snacks.bufdelete.delete() end,             desc = "Close Buffer" },
-    { "<leader>X",       function() Snacks.bufdelete.all() end,                desc = "Close Buffer" },
-    { "]]",              function() Snacks.words.jump(vim.v.count1) end,       desc = "Next Reference" },
-    { "[[",              function() Snacks.words.jump(-vim.v.count1) end,      desc = "Prev Reference" },
+    -- 🗂️ General & Explorer
+    { "<leader><space>", function() require("snacks").picker.smart() end,                desc = "Smart File Picker (Git-aware)" },
+    { "<leader>,",       function() require("snacks").picker.buffers() end,             desc = "Open Buffers" },
+    { "<leader>/",       function() require("snacks").picker.grep() end,                desc = "Live Grep in Project" },
+    { "<leader>.",       function() require("snacks").picker.recent() end,              desc = "Recently Opened Files" },
+    { "<leader>e",       function() require("snacks").explorer() end,                   desc = "Toggle File Explorer" },
+    { "<leader>:",       function() require("snacks").picker.command_history() end,     desc = "Command History (:) Usage)" },
+    { "<leader>n",       function() require("snacks").picker.notifications() end,       desc = "Notification History" },
+
+    -- 🔍 File Finding
+    { "<leader>ff",      function() require("snacks").picker.files() end,               desc = "Find Files (root dir)" },
+    { "<leader>fg",      function() require("snacks").picker.git_files() end,           desc = "Find Git Tracked Files" },
+    { "<leader>fb",      function() require("snacks").picker.buffers() end,             desc = "Find Open Buffers" },
+    { "<leader>fp",      function() require("snacks").picker.projects() end,            desc = "Switch Projects (root dirs)" },
+
+    -- 🔎 Grep/Search
+    { "<leader>ss",      function() require("snacks").picker.grep() end,                desc = "Live Grep in Files" },
+    { "<leader>sw",      function() require("snacks").picker.grep_word() end,           desc = "Find Word Under Cursor" },
+    { "<leader>sb",      function() require("snacks").picker.lines() end,               desc = "Search Lines in Current Buffer" },
+    { "<leader>sB",      function() require("snacks").picker.grep_buffers() end,        desc = "Search Across All Open Buffers" },
+    { "<leader>su",      function() require("snacks").picker.undo() end,                desc = "Browse Undo History" },
+
+    -- 🧠 LSP
+    { "gd",              function() require("snacks").picker.lsp_definitions() end,      desc = "LSP: Go to Definition" },
+    { "gD",              function() require("snacks").picker.lsp_declarations() end,     desc = "LSP: Go to Declaration" },
+    { "gr",              function() require("snacks").picker.lsp_references() end,       desc = "LSP: Find References" },
+    { "gI",              function() require("snacks").picker.lsp_implementations() end,  desc = "LSP: Go to Implementation" },
+    { "gy",              function() require("snacks").picker.lsp_type_definitions() end, desc = "LSP: Go to Type Definition" },
+    { "<leader>ls",      function() require("snacks").picker.lsp_symbols() end,          desc = "LSP: Document Symbols" },
+    { "<leader>lS",      function() require("snacks").picker.lsp_workspace_symbols() end,desc = "LSP: Workspace Symbols" },
+
+    -- 🧬 Git
+    { "<leader>gg",      function() require("snacks").lazygit.open() end,               desc = "Open LazyGit" },
+    { "<leader>gs",      function() require("snacks").picker.git_status() end,          desc = "Git Status (Files Changed)" },
+    { "<leader>gl",      function() require("snacks").picker.git_log() end,             desc = "Git Commit Log" },
+    { "<leader>gb",      function() require("snacks").picker.git_branches() end,        desc = "Git Branches" },
+    { "<leader>gd",      function() require("snacks").picker.git_diff() end,            desc = "Git Diff (Hunks View)" },
+
+    -- 📦 Buffers
+    { "<leader>bd",      function() require("snacks").bufdelete.delete() end,           desc = "Close Current Buffer" },
+    { "<leader>bD",      function() require("snacks").bufdelete.all() end,              desc = "Close All Buffers" },
+
+    -- ✨ Word References
+    { "]]",              function() require("snacks").words.jump(vim.v.count1) end,     desc = "Next Symbol Usage (LSP Words)" },
+    { "[[",              function() require("snacks").words.jump(-vim.v.count1) end,    desc = "Prev Symbol Usage (LSP Words)" },
     {
       "<leader>uw",
       function()
-        if Snacks.words.is_enabled() then
-          Snacks.words.disable()
+        local w = require("snacks").words
+        if w.is_enabled() then
+          w.disable()
         else
-          Snacks.words.enable()
+          w.enable()
         end
       end,
-      desc = "Toggle: Words (LSP)",
+      desc = "Toggle LSP Symbol Highlighting",
     },
-    { "<m-/>", toggle_terminal, desc = "Toggle: Terminal", mode = { "n", "t" } },
-    { "<m-_>", toggle_terminal, desc = "Toggle: Terminal (TMUX)", mode = { "n", "t" } },
-    -- HACK: Fixes issue temporarily with Explorer not closing properly on ZZ
-    {
-      "ZZ",
-      quit_with_explorer,
-      desc = "Close All (including Explorer)"
-    },
+
+    -- 🖥️ Terminal
+    { "<M-/>", toggle_terminal, desc = "Toggle Terminal", mode = { "n", "t" } },
+    { "<M-_>", toggle_terminal, desc = "Toggle Terminal (TMUX)", mode = { "n", "t" } },
   },
+
 
   opts = {
     -- input = { enabled = input },
@@ -147,6 +140,7 @@ return {
         -- 3. Shows Git status for all files in the project
 
         explorer = {
+          enabled = explorer,
           focus = true,
           hidden = true,
           layout = {
