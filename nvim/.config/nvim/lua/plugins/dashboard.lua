@@ -1,17 +1,16 @@
-
 return {
   'nvimdev/dashboard-nvim',
   event = 'VimEnter',
-  config = function ()
+  config = function()
     -- General
-    vim.cmd([[highlight DashboardHeader guifg=#b5bfe2 gui=nocombine]])
+    vim.cmd [[highlight DashboardHeader guifg=#b5bfe2 gui=nocombine]]
     -- Hyper theme
-    vim.cmd([[highlight DashboardProjectTitle guifg=#89b4fa gui=nocombine]])
-    vim.cmd([[highlight DashboardMruTitle guifg=#89b4fa gui=nocombine]])
-    vim.cmd([[highlight DashboardFiles guifg=#cdd6f4 gui=nocombine]])
+    vim.cmd [[highlight DashboardProjectTitle guifg=#89b4fa gui=nocombine]]
+    vim.cmd [[highlight DashboardMruTitle guifg=#89b4fa gui=nocombine]]
+    vim.cmd [[highlight DashboardFiles guifg=#cdd6f4 gui=nocombine]]
 
     require('dashboard').setup {
-      theme = 'hyper',     --  theme is doom and hyper default is hyper
+      theme = 'hyper', --  theme is doom and hyper default is hyper
       disable_move = false, -- boolean default is false
       hide = {
         statusline = false,
@@ -23,7 +22,7 @@ return {
             desc = ' New File',
             group = 'Number',
             action = 'enew',
-            key = 'n'
+            key = 'n',
           },
           {
             desc = ' Fuzzy Find',
@@ -56,8 +55,8 @@ return {
           icon = '  ',
           label = 'Recent Files',
         },
-        footer = {''}
-      }
+        footer = { '' },
+      },
     }
   end,
 }

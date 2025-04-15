@@ -1,13 +1,13 @@
 return {
   {
-    "catppuccin/nvim",
+    'catppuccin/nvim',
     priority = 1000,
 
     opts = {
       transparent_background = true,
       dim_inactive = {
         enabled = false,
-        shade = "dark",
+        shade = 'dark',
         percentage = 0.15,
       },
       integrations = {
@@ -28,9 +28,8 @@ return {
     },
 
     config = function(_, opts)
-      require("catppuccin").setup(opts)
-      vim.cmd.colorscheme("catppuccin-frappe")
+      require('catppuccin').setup(opts)
+      vim.cmd.colorscheme 'catppuccin-mocha'
     end,
-
   },
 }

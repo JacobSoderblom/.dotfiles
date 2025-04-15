@@ -1,5 +1,5 @@
 local function abort_if_selected(fallback)
-  local cmp = require("cmp")
+  local cmp = require 'cmp'
   if cmp.visible() and cmp.get_active_entry() then
     cmp.abort()
   else
@@ -8,33 +8,34 @@ local function abort_if_selected(fallback)
 end
 
 local function confirm_if_selected(fallback)
-  local cmp = require("cmp")
+  local cmp = require 'cmp'
   if cmp.visible() and cmp.get_active_entry() then
-    cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+    cmp.confirm { behavior = cmp.ConfirmBehavior.Replace, select = false }
   else
     fallback()
   end
 end
 
-
 return {
   --=====================================================[ @COMPLETION_ENGINE ]
   -- AutoCompletion engine for external source
   {
-    "hrsh7th/nvim-cmp",
-    event = "VeryLazy",
+    'hrsh7th/nvim-cmp',
+    event = 'VeryLazy',
     config = function()
-      local cmp = require("cmp")
-      local luasnip = require("luasnip")
-      local neotab = require("neotab")
-      local cmp_buffer = require('cmp_buffer')
+      local cmp = require 'cmp'
+      local luasnip = require 'luasnip'
+      local neotab = require 'neotab'
+      local cmp_buffer = require 'cmp_buffer'
 
       -- Load friendly snippet using LuaSnip loader
       require('luasnip.loaders.from_vscode').lazy_load()
 
       -- Combine snippets with other filetypes
 
-      cmp.setup({
+      cmp.register_source('easy-dotnet', require('easy-dotnet').package_completion_source)
+
+      cmp.setup {
 
         performance = {
           enabled = true,
@@ -45,17 +46,18 @@ return {
 
         ---------------------------------------------------[ @CMP_SOURCE_LIST ]
 
-        sources = cmp.config.sources({
+        sources = cmp.config.sources {
           { name = 'path' },
           {
             name = 'luasnip',
             -- Doesn't trigger keyword/snippet completion inside string
             entry_filter = function()
-              local context = require("cmp.config.context")
-              return not context.in_treesitter_capture("string") and not context.in_syntax_group("String")
+              local context = require 'cmp.config.context'
+              return not context.in_treesitter_capture 'string' and not context.in_syntax_group 'String'
             end,
           },
           { name = 'nvim_lsp' },
+          { name = 'easy-dotnet' },
           {
             name = 'buffer',
             max_item_count = 7,
@@ -71,33 +73,35 @@ return {
               end,
             },
           },
-        }),
+        },
 
         sorting = {
           comparators = {
             -- Locality bonus comparator (distance-based sorting)
-            function(...) return cmp_buffer:compare_locality(...) end,
-          }
+            function(...)
+              return cmp_buffer:compare_locality(...)
+            end,
+          },
         },
 
         --------------------------------------------------[ @CMP_MENU_BORDERS ]
 
         window = {
           -- completion = cmp.config.window.bordered(),
-          completion = cmp.config.window.bordered({
+          completion = cmp.config.window.bordered {
             col_offset = -3,
             side_padding = 1,
-          }),
+          },
           documentation = cmp.config.window.bordered(),
         },
 
         ---------------------------------------------------[ @CMP_KEY_MAPPING ]
 
-        mapping = cmp.mapping.preset.insert({
+        mapping = cmp.mapping.preset.insert {
 
           -- =================[ AUTOCOMPLETION BEHAVIOURS ]================= --
 
-          ["<m-.>"] = cmp.mapping({
+          ['<m-.>'] = cmp.mapping {
             i = function()
               if cmp.visible() then
                 cmp.abort()
@@ -112,7 +116,7 @@ return {
                 cmp.complete()
               end
             end,
-          }),
+          },
 
           ['<C-n>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 'c' }),
           ['<C-p>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 'c' }),
@@ -123,43 +127,41 @@ return {
           -- =====================[ ITEM CONFIRMATION ]===================== --
 
           -- DISABLE CMP MENU (ONLY IF SELECTED)
-          ["o"] = cmp.mapping(abort_if_selected, { "i", "c" }),
-          ["<C-o>"] = cmp.mapping(abort_if_selected, { "i", "c" }),
+          ['o'] = cmp.mapping(abort_if_selected, { 'i', 'c' }),
+          ['<C-o>'] = cmp.mapping(abort_if_selected, { 'i', 'c' }),
 
           -- CONFIRM ITEM (ONLY IF SELECTED)
-          ["i"] = cmp.mapping(confirm_if_selected, { "i", "c" }),
-          ["<C-i>"] = cmp.mapping(confirm_if_selected, { "i", "c" }),
-          ["<CR>"] = cmp.mapping(confirm_if_selected, { "i", "c" }),
+          ['i'] = cmp.mapping(confirm_if_selected, { 'i', 'c' }),
+          ['<C-i>'] = cmp.mapping(confirm_if_selected, { 'i', 'c' }),
+          ['<CR>'] = cmp.mapping(confirm_if_selected, { 'i', 'c' }),
 
           -- ======================[ ITEM SELECTION ]====================== --
 
           -- DOWN TO SELECT NEXT ITEM
-          ["<Down>"] = cmp.mapping(cmp.mapping.select_next_item(), { "i", "c" }),
+          ['<Down>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 'c' }),
 
           -- UP TO SELECT PREVIOUS ITEM
-          ["<Up>"] = cmp.mapping(cmp.mapping.select_prev_item(), { "i", "c" }),
+          ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 'c' }),
 
           -- TAB TO JUMP SNIPPETS OR SELECT OR TABOUT
-          ["<Tab>"] = cmp.mapping(function()
+          ['<Tab>'] = cmp.mapping(function()
             if luasnip.jumpable(1) then
               luasnip.jump(1)
             elseif cmp.visible() and cmp.get_active_entry() then
-              cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+              cmp.confirm { behavior = cmp.ConfirmBehavior.Replace, select = false }
             else
               neotab.tabout()
             end
-          end, { "i", "c" }),
+          end, { 'i', 'c' }),
 
-          ["<S-Tab>"] = cmp.mapping(function(fallback)
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
             if luasnip.jumpable(-1) then
               luasnip.jump(-1)
             else
               fallback()
             end
-          end, { "i", "c" }),
-
-        }),
-
+          end, { 'i', 'c' }),
+        },
 
         snippet = {
           -- REQUIRED - you must specify a snippet engine
@@ -167,7 +169,6 @@ return {
             require('luasnip').lsp_expand(args.body)
           end,
         },
-
 
         -----------------------------------------------[ @CMP_MENU_FORMATTING ]
         formatting = {
@@ -225,7 +226,7 @@ return {
             item.kind = (kind_icons[item.kind] or '') .. item.kind
 
             -- CUSTOM TREESITTER BASED COLORFUL CMP MENU
-            local highlights_info = require("colorful-menu").cmp_highlights(entry)
+            local highlights_info = require('colorful-menu').cmp_highlights(entry)
             if highlights_info ~= nil then
               item.abbr_hl_group = highlights_info.highlights
               item.abbr = highlights_info.text
@@ -233,22 +234,21 @@ return {
 
             return item
           end,
-
         },
-      })
+      }
 
       cmp.setup.cmdline({ '/', '?' }, {
         sources = {
-          { name = 'buffer' }
-        }
+          { name = 'buffer' },
+        },
       })
 
       cmp.setup.cmdline(':', {
         sources = cmp.config.sources({
-          { name = 'path' }
+          { name = 'path' },
         }, {
-          { name = 'cmdline' }
-        })
+          { name = 'cmdline' },
+        }),
       })
     end,
 
@@ -256,24 +256,21 @@ return {
 
       --===========================================================[ @SOURCES ]
       -- LSP server source
-      { "hrsh7th/cmp-nvim-lsp" },
+      { 'hrsh7th/cmp-nvim-lsp' },
       -- LuaSnip snippet source to configure external collections
       { 'saadparwaiz1/cmp_luasnip' },
       -- Path completion source
-      { "hrsh7th/cmp-path" },
+      { 'hrsh7th/cmp-path' },
       -- Buffer completion source
-      { "hrsh7th/cmp-buffer" },
+      { 'hrsh7th/cmp-buffer' },
       -- Commandline completion source
-      { "hrsh7th/cmp-cmdline" },
+      { 'hrsh7th/cmp-cmdline' },
 
       --====================================================[ @SNIPPET_ENGINE ]
       -- Snippet engine which parses custom snippets
       { 'L3MON4D3/LuaSnip' },
       -- Snippet collection for different languages
-      { "rafamadriz/friendly-snippets" },
-
+      { 'rafamadriz/friendly-snippets' },
     },
-
   },
-
 }

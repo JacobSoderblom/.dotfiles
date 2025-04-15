@@ -3,7 +3,7 @@ return {
 
   -- Manager for language servers, linters, formatters
   {
-    "williamboman/mason.nvim",
+    'williamboman/mason.nvim',
     opts = {
       ui = {
         icons = {
@@ -13,29 +13,28 @@ return {
         },
         border = 'rounded',
         keymaps = {
-          toggle_server_expand = "<CR>",
-          install_server = "i",
-          update_server = "u",
-          check_server_version = "c",
-          update_all_servers = "U",
-          check_outdated_servers = "C",
-          uninstall_server = "X",
-          cancel_installation = "<C-c>",
+          toggle_server_expand = '<CR>',
+          install_server = 'i',
+          update_server = 'u',
+          check_server_version = 'c',
+          update_all_servers = 'U',
+          check_outdated_servers = 'C',
+          uninstall_server = 'X',
+          cancel_installation = '<C-c>',
         },
       },
     },
   },
 
-
   --=====================[ MASON TOOLS AUTO INSTALLER ]=====================--
 
   {
-    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    'WhoIsSethDaniel/mason-tool-installer.nvim',
     opts = {
       ensure_installed = {
-        "bash-language-server", -- Bash LSP
-        "lua-language-server",  -- Lua LSP
-        "harper-ls",
+        'bash-language-server', -- Bash LSP
+        'lua-language-server', -- Lua LSP
+        'harper-ls',
       },
     },
   },
@@ -44,12 +43,12 @@ return {
 
   -- Configures Mason installed servers to LSPConfig
   {
-    "williamboman/mason-lspconfig.nvim",
+    'williamboman/mason-lspconfig.nvim',
     opts = {
       ensure_installed = {},
       dependencies = {
-        'cmp_nvim_lsp'
-      }
+        'cmp_nvim_lsp',
+      },
     },
 
     -- Automatically configures LSP servers
@@ -63,7 +62,7 @@ return {
             Lua = {
               diagnostics = { globals = { 'vim', 'require' } },
               workspace = {
-                library = vim.api.nvim_get_runtime_file("", true),
+                library = vim.api.nvim_get_runtime_file('', true),
                 checkThirdParty = false,
               },
               telemetry = { enable = false },
@@ -72,16 +71,16 @@ return {
         },
       }
 
-      require("mason-lspconfig").setup_handlers {
+      require('mason-lspconfig').setup_handlers {
         function(server_name)
           if custom_lsp_configs[server_name] then
             -- APPLY CUSTOM CONFIG IF EXISTS
             local config = custom_lsp_configs[server_name]
             config.capabilities = capabilities
-            require("lspconfig")[server_name].setup(config)
+            require('lspconfig')[server_name].setup(config)
           else
             -- OTHER LANGUAGE SERVER AUTO CONFIG
-            require("lspconfig")[server_name].setup {
+            require('lspconfig')[server_name].setup {
               capabilities = capabilities,
             }
           end
@@ -96,26 +95,24 @@ return {
 
   -- Configure Language servers to Neovim LSP
   {
-    "neovim/nvim-lspconfig",
+    'neovim/nvim-lspconfig',
     opts = {},
     -----------------------------------------------------[ @LSPCONFIG_CONFIG ]
     config = function()
       require('lspconfig.ui.windows').default_options.border = 'rounded'
 
       -- Diagnostic Signs
-      local signs = { Error = "󰅚 ", Warn = "󰀪 ", Hint = "󰌶 ", Info = " " }
+      local signs = { Error = '󰅚 ', Warn = '󰀪 ', Hint = '󰌶 ', Info = ' ' }
       for type, icon in pairs(signs) do
-        local hl = "DiagnosticSign" .. type
+        local hl = 'DiagnosticSign' .. type
         vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
       end
-
 
       -- Global mappings.
       vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
       vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
       vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
       vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
-
 
       -- Use LspAttach autocommand to only map the following keys
       -- after the language server attaches to the current buffer
@@ -140,7 +137,6 @@ return {
           -- end, opts)
           -- vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
           -- vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-          vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, opts)
           vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
           -- vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
           -- vim.keymap.set('n', '<space>fm', function()

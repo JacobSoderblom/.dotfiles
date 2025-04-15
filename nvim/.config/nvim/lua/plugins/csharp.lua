@@ -7,15 +7,35 @@ local function add_dotnet_mappings()
 
   vim.keymap.set('n', '<leader>dt', function()
     vim.cmd 'Dotnet testrunner'
-  end, { noremap = true, silent = true })
+  end, {
+    noremap = true,
+    silent = true,
+    desc = 'Dotnet: Run test runner',
+  })
+
+  vim.keymap.set('n', '<leader>dr', function()
+    vim.cmd 'Dotnet testrunner refresh'
+  end, {
+    noremap = true,
+    silent = true,
+    desc = 'Dotnet: Refresh test runner',
+  })
 
   vim.keymap.set('n', '<leader>dp', function()
     dotnet.run_with_profile(true)
-  end, { noremap = true, silent = true })
+  end, {
+    noremap = true,
+    silent = true,
+    desc = 'Dotnet: Run with profile',
+  })
 
   vim.keymap.set('n', '<leader>db', function()
     dotnet.build_default_quickfix()
-  end, { noremap = true, silent = true, desc = "Dotnet build" })
+  end, {
+    noremap = true,
+    silent = true,
+    desc = 'Dotnet: Build (Quickfix)',
+  })
 end
 
 -- lazy.nvim

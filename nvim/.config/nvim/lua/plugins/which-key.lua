@@ -1,26 +1,26 @@
 return {
-  "folke/which-key.nvim",
-  event = "VeryLazy",
+  'folke/which-key.nvim',
+  event = 'VeryLazy',
   opts = {
     ---@type false | "classic" | "modern" | "helix"
-    preset = "classic",
+    preset = 'helix',
     delay = 0,
 
     plugins = {
-      marks = true,           -- shows your marks on ' and `
-      registers = true,       -- shows your registers on "
+      marks = true, -- shows your marks on ' and `
+      registers = true, -- shows your registers on "
       spelling = {
-        enabled = false,      -- pressing z= to select spelling suggestions
+        enabled = false, -- pressing z= to select spelling suggestions
         suggestions = 20,
       },
       presets = {
-        operators = true,     -- operators like d, y, ...
-        motions = true,       -- motions
-        text_objects = true,  -- text objects after entering an operator
-        windows = true,       -- default bindings on <c-w>
-        nav = true,           -- misc bindings to work with windows
-        z = true,             -- folds, spelling prefixed with z
-        g = true,             -- prefixed with g
+        operators = true, -- operators like d, y, ...
+        motions = true, -- motions
+        text_objects = true, -- text objects after entering an operator
+        windows = true, -- default bindings on <c-w>
+        nav = true, -- misc bindings to work with windows
+        z = true, -- folds, spelling prefixed with z
+        g = true, -- prefixed with g
       },
     },
     icons = {
@@ -60,16 +60,17 @@ return {
       },
     },
     spec = {
-      { "<leader>f", group = "[F]ind" },
-      { "<leader>s", group = "[S]earch" },
-      { "<leader>g", group = "[G]it" },
-      { "<leader>l", group = "[L]SP" },
-      { "<leader>b", group = "[B]uffer" },
-      { "<leader>u", group = "[U]I / Utils" },
-      { "<leader>t", group = "[T]oggle" },
-      { "<leader>n", group = "[N]otifications" },
-      { "<leader>:", group = "[:]: History" },
-      { "<leader>e", group = "[E]xplorer" },
+      { '<leader>f', group = '[F]ind' },
+      { '<leader>s', group = '[S]earch' },
+      { '<leader>g', group = '[G]it' },
+      { '<leader>l', group = '[L]SP' },
+      { '<leader>b', group = '[B]uffer' },
+      { '<leader>u', group = '[U]I / Utils' },
+      { '<leader>t', group = '[T]oggle' },
+      { '<leader>n', group = '[N]otifications' },
+      { '<leader>:', group = '[:]: History' },
+      { '<leader>e', group = '[E]xplorer' },
+      { '<leader>d', group = '[D]otnet' },
     },
   },
 }

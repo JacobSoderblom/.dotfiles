@@ -128,7 +128,12 @@ esac
 
 export PATH="$PATH:/home/jacob/.dotnet/tools"
 export PATH="$PATH:/home/jacob/.local/share/netcoredbg"
+export PATH="$PATH:/Users/jacob/.local/share/netcoredbg"
 export CC=clang
 export CXX=clang
 source /home/jacob/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /home/jacob/.oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/jacob/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

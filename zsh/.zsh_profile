@@ -12,6 +12,7 @@ export GIT_EDITOR=$VIM
 export NF_IDFILE=$HOME/.idfile
 export N_PREFIX="$HOME/.local/n"
 export DOTFILES=$HOME/.dotfiles
+export TESTCONTAINERS_HOST_OVERRIDE=$(ipconfig getifaddr en0)
 
 catr() {
     tail -n "+$1" $3 | head -n "$(($2 - $1 + 1))"
