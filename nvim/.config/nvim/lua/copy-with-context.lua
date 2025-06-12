@@ -59,5 +59,5 @@ end, { silent = true, desc = "Yank selection with relative path context"})
 
 vim.keymap.set('x', mappings.absolute, function()
   copy_with_context(true, true)
-end, { silent = true,  desc = "Yank selection with aboslute path context"})
+end, { silent = true,  desc = "Yank selection with absolute path context"})
 
