@@ -118,7 +118,7 @@ export NVM_DIR="$HOME/.config/nvm"
 eval "$(tmuxifier init -)"
 
 # pnpm
-export PNPM_HOME="/home/jacob/Library/pnpm"
+export PNPM_HOME="/Users/jacob/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -127,13 +127,21 @@ esac
 #
 
 export PATH="$PATH:/home/jacob/.dotnet/tools"
+export PATH="$PATH:/usr/local/share/dotnet"
 export PATH="$PATH:/home/jacob/.local/share/netcoredbg"
 export PATH="$PATH:/Users/jacob/.local/share/netcoredbg"
 export CC=clang
 export CXX=clang
-source /home/jacob/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /home/jacob/.oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# source /home/jacob/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# source /home/jacob/.oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="/Users/jacob/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+
+# bun completions
+[ -s "/Users/jacob/.bun/_bun" ] && source "/Users/jacob/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
