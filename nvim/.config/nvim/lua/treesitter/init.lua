@@ -1,8 +1,6 @@
 -- Core TS setup (parsers, highlight, indent, incremental selection)
 require 'plugins.treesitter.nvim-treesitter'
 
--- Extra parsers (like caddyfile)
-require 'plugins.treesitter.parsers-extra'
 
 -- Textobjects (af/if, motions, swaps)
 require 'plugins.treesitter.textobjects'

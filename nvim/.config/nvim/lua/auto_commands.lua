@@ -1,6 +1,6 @@
 --===========================[ @GENERAL_COMMANDS ]===========================--
 -- Use system clipboard
-vim.cmd ':set clipboard=unnamedplus'
+vim.opt.clipboard = 'unnamedplus'
 
 -- Highlighted Yank
 vim.cmd [[

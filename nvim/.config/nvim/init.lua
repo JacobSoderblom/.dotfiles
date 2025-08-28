@@ -1,6 +1,5 @@
 require 'set'
 require 'remap'
-require 'custom_functions'
 require 'auto_commands'
 require 'copy-with-context'
 require 'clipboard'

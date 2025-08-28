@@ -25,7 +25,6 @@ return {
     config = function()
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
-      local neotab = require 'neotab'
       local cmp_buffer = require 'cmp_buffer'
 
       -- Load friendly snippet using LuaSnip loader
@@ -144,13 +143,13 @@ return {
           ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 'c' }),
 
           -- TAB TO JUMP SNIPPETS OR SELECT OR TABOUT
-          ['<Tab>'] = cmp.mapping(function()
+          ['<Tab>'] = cmp.mapping(function(fallback)
             if luasnip.jumpable(1) then
               luasnip.jump(1)
             elseif cmp.visible() and cmp.get_active_entry() then
               cmp.confirm { behavior = cmp.ConfirmBehavior.Replace, select = false }
             else
-              neotab.tabout()
+              fallback()
             end
           end, { 'i', 'c' }),
 
