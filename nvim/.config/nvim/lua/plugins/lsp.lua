@@ -3,5 +3,4 @@ return {
   require 'lsp.nvim-lspconfig',
   require 'lsp.inline-diagnostics',
   require 'lsp.rename',
-  require 'lsp.diagflow',
 }
