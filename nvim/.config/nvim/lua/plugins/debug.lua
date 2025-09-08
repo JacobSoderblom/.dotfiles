@@ -23,6 +23,7 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+    'mfussenegger/nvim-dap-python',
 
     {
       'theHamsta/nvim-dap-virtual-text',
@@ -105,6 +106,7 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'debugpy',
       },
     }
 
@@ -145,6 +147,14 @@ return {
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
+
+    require('dap-python').setup 'python'
+
+    dap.adapters.python = {
+      type = 'executable',
+      command = 'uv',
+      args = { 'run', 'python', '-m', 'debugpy.adapter' },
+    }
 
     require('dap.netcore').register_net_dap()
   end,

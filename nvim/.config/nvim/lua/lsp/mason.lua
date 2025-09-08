@@ -35,6 +35,10 @@ return {
         'bash-language-server', -- Bash LSP
         'lua-language-server', -- Lua LSP
         'harper-ls',
+        'pyright', -- Python LSP
+        'ruff', -- Python formatter & linter
+        'ruff-lsp', -- Ruff LSP
+        'debugpy', -- Python DAP
       },
     },
   },
@@ -68,6 +72,8 @@ return {
           'html',
           'cssls',
           'gopls',
+          'pyright',
+          'ruff_lsp',
         },
         automatic_enable = true,
       }
