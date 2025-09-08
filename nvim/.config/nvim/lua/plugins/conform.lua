@@ -36,6 +36,7 @@ return {
       typescriptreact = { 'prettier' },
       html = { 'prettier' },
       css = { 'prettier' },
+      python = { 'ruff_format' },
     },
 
     formatters = {
