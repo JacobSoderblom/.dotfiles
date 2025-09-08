@@ -145,3 +145,8 @@ export PATH="/Users/jacob/.rd/bin:$PATH"
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Created by `pipx` on 2025-08-29 07:52:04
+export PATH="$PATH:/Users/jacob/.local/bin"
+
+. "$HOME/.local/bin/env"

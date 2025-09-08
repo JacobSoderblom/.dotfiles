@@ -120,4 +120,5 @@ pnpm_upgrade() {
 # else
 #   sudo sysctl -p
 # fi
-
+alias py="python3"
+alias pip="pip3"
