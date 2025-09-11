@@ -51,7 +51,8 @@ return {
     })
 
     lspconfig.pyright.setup {
-      root_dir = lspconfig.util.root_pattern('uv.lock', 'pyproject.toml', '.git'),
+      root_dir = lspconfig.util.root_pattern('uv.lock', '.git'),
+      
       on_new_config = function(config, root_dir)
         config.settings = config.settings or {}
         config.settings.python = config.settings.python or {}
