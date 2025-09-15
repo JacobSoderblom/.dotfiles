@@ -8,8 +8,8 @@ return {
 	font = wezterm.font("Fira Code Nerd Font"),
 	font_size = 11,
 
-	-- Background opacity
-	-- window_background_opacity = 0.75,
+        -- Background opacity
+        window_background_opacity = 0.95,
 
 	-- Window size & padding
 	initial_rows = 35,
@@ -72,27 +72,27 @@ return {
 
                 -- Tab bar styling
                 tab_bar = {
-                        background = "#0d1117",
+                        background = "#0a0c10",
                         active_tab = {
-                                bg_color = "#0a0c10",
-                                fg_color = "#f0f6fc",
+                                bg_color = "#d2a8ff",
+                                fg_color = "#0a0c10",
                                 intensity = "Bold",
                         },
                         inactive_tab = {
-                                bg_color = "#0d1117",
+                                bg_color = "#161b22",
                                 fg_color = "#f0f6fc",
                         },
                         inactive_tab_hover = {
-                                bg_color = "#0a0c10",
-                                fg_color = "#79c0ff",
+                                bg_color = "#79c0ff",
+                                fg_color = "#0a0c10",
                         },
                         new_tab = {
-                                bg_color = "#0d1117",
+                                bg_color = "#0a0c10",
                                 fg_color = "#f0f6fc",
                         },
                         new_tab_hover = {
-                                bg_color = "#0a0c10",
-                                fg_color = "#79c0ff",
+                                bg_color = "#161b22",
+                                fg_color = "#f0f6fc",
                                 italic = true,
                         },
                 },
@@ -100,9 +100,9 @@ return {
 
         -- Title bar styling
         window_frame = {
-                active_titlebar_bg = "#0d1117",
+                active_titlebar_bg = "#0a0c10",
                 active_titlebar_fg = "#f0f6fc",
-                inactive_titlebar_bg = "#0d1117",
+                inactive_titlebar_bg = "#0a0c10",
                 inactive_titlebar_fg = "#f0f6fc",
         },
 }
