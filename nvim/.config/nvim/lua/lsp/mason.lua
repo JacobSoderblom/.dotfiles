@@ -28,21 +28,21 @@ return {
 
   --=====================[ MASON TOOLS AUTO INSTALLER ]=====================--
 
-  {
-    'WhoIsSethDaniel/mason-tool-installer.nvim',
-    opts = {
-      ensure_installed = {
-        'bash-language-server', -- Bash LSP
-        'lua-language-server', -- Lua LSP
-        'harper-ls',
-        'pyright', -- Python LSP
-        'ruff', -- Python formatter & linter
-        'ruff-lsp', -- Ruff LSP
-        'debugpy', -- Python DAP
-      },
-    },
-  },
-
+  -- {
+  --   'WhoIsSethDaniel/mason-tool-installer.nvim',
+  --   opts = {
+  --     ensure_installed = {
+  --       'bash-language-server', -- Bash LSP
+  --       'lua-language-server', -- Lua LSP
+  --       'harper-ls',
+  --       'pyright', -- Python LSP
+  --       'ruff', -- Python formatter & linter
+  --       'ruff-lsp', -- Ruff LSP
+  --       'debugpy', -- Python DAP
+  --     },
+  --   },
+  -- },
+  --
   --==========================[ MASON LSP CONFIG ]==========================--
 
   -- Configures Mason installed servers to LSPConfig
@@ -55,7 +55,7 @@ return {
       },
     },
 
-    -- Automatically configures LSP servers
+    -- Manually configure servers (no setup_handlers in this fork)
     config = function()
       require('mason').setup {
         registries = {
@@ -63,7 +63,9 @@ return {
           'github:Crashdummyy/mason-registry',
         },
       }
-      require('mason-lspconfig').setup {
+
+      local mason_lspconfig = require 'mason-lspconfig'
+      mason_lspconfig.setup {
         ensure_installed = {
           'lua_ls',
           'ts_ls',
@@ -73,44 +75,65 @@ return {
           'cssls',
           'gopls',
           'pyright',
-          'ruff_lsp',
+          'ruff',
         },
-        automatic_enable = true,
       }
 
-      -- local custom_lsp_configs = {
-      --   -- LUA LANGUAGE SERVER
-      --   lua_ls = {
-      --     settings = {
-      --       Lua = {
-      --         diagnostics = { globals = { 'vim', 'require' } },
-      --         workspace = {
-      --           library = vim.api.nvim_get_runtime_file('', true),
-      --           checkThirdParty = false,
-      --         },
-      --         telemetry = { enable = false },
-      --       },
-      --     },
-      --   },
-      -- }
-      --
-      -- require('mason-lspconfig').setup_handlers {
-      --   function(server_name)
-      --     if custom_lsp_configs[server_name] then
-      --       -- APPLY CUSTOM CONFIG IF EXISTS
-      --       local config = custom_lsp_configs[server_name]
-      --       config.capabilities = capabilities
-      --       require('lspconfig')[server_name].setup(config)
-      --     else
-      --       -- OTHER LANGUAGE SERVER AUTO CONFIG
-      --       require('lspconfig')[server_name].setup {
-      --         capabilities = capabilities,
-      --       }
-      --     end
-      --   end,
-      -- }
+      local lspconfig = require 'lspconfig'
+      local util = require 'lspconfig.util'
 
-      require('lspconfig').harper_ls.setup {}
+      -----------------------------------------------------------------------
+      -- Default setup for servers OTHER than pyright
+      -----------------------------------------------------------------------
+      local default_servers = {
+        'lua_ls',
+        'ts_ls',
+        'eslint',
+        'jsonls',
+        'html',
+        'cssls',
+        'gopls',
+        'ruff',
+      }
+      for _, server in ipairs(default_servers) do
+        if lspconfig[server] then
+          lspconfig[server].setup {}
+        end
+      end
+
+      -----------------------------------------------------------------------
+      -- PYRIGHT: run inside uv + correct root + monorepo paths
+      -----------------------------------------------------------------------
+      local mason_bin = vim.fn.stdpath 'data' .. '/mason/bin/pyright-langserver'
+
+      lspconfig.pyright.setup {
+        -- 1) Start the language server inside your uv-managed environment
+        cmd = { 'uv', 'run', mason_bin, '--stdio' },
+
+        -- 2) Ensure the workspace root is the repo root
+        root_dir = util.root_pattern('pyrightconfig.json', 'pyproject.toml', '.git'),
+
+        -- 3) Also explicitly set the interpreter from the detected root
+        before_init = function(_, config)
+          local buf = vim.api.nvim_buf_get_name(0)
+          local root = util.find_git_ancestor(buf) or util.root_pattern('pyrightconfig.json', 'pyproject.toml')(buf) or vim.loop.cwd()
+          config.settings = config.settings or {}
+          config.settings.python = config.settings.python or {}
+          config.settings.python.pythonPath = root .. '/.venv/bin/python'
+        end,
+
+        settings = {
+          python = {
+            analysis = {
+              diagnosticMode = 'workspace', -- analyze full workspace
+              autoSearchPaths = true,
+              useLibraryCodeForTypes = true,
+              -- Your repo sources live under "py/", expose that to the analyzer
+              extraPaths = { 'py' },
+            },
+          },
+        },
+      }
     end,
   },
 }
