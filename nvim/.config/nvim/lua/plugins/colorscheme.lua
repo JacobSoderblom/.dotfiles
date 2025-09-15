@@ -1,11 +1,13 @@
 return {
   {
     'projekt0n/github-nvim-theme',
+    lazy = false,
     priority = 1000,
 
     opts = {
-      theme_style = 'dark_high_contrast',
-      transparent = true,
+      options = {
+        transparent = true,
+      },
     },
 
     config = function(_, opts)
