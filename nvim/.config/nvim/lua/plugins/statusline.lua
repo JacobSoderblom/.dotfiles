@@ -45,8 +45,8 @@ local fileformat = function()
 end
 
 -- HACK: remove ugly white separators due to lualine bugs
-local customcat = require 'lualine.themes.catppuccin-macchiato'
-customcat.inactive.a.bg = '#282828'
+local customgithub = require 'lualine.themes.github_dark_high_contrast'
+customgithub.inactive.a.bg = '#0a0c10'
 
 -- ------------------------------------------------------------------------- --
 --                               RETURN CONFIG                               --
@@ -62,7 +62,7 @@ return {
     require('lualine').setup {
 
       options = {
-        theme = customcat,
+        theme = customgithub,
         icons_enabled = true,
         component_separators = '',
         section_separators = '',
