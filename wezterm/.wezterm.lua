@@ -69,5 +69,40 @@ return {
                                 color = "#79c0ff",
                         },
                 },
+
+                -- Tab bar styling
+                tab_bar = {
+                        background = "#0d1117",
+                        active_tab = {
+                                bg_color = "#0a0c10",
+                                fg_color = "#f0f6fc",
+                                intensity = "Bold",
+                        },
+                        inactive_tab = {
+                                bg_color = "#0d1117",
+                                fg_color = "#f0f6fc",
+                        },
+                        inactive_tab_hover = {
+                                bg_color = "#0a0c10",
+                                fg_color = "#79c0ff",
+                        },
+                        new_tab = {
+                                bg_color = "#0d1117",
+                                fg_color = "#f0f6fc",
+                        },
+                        new_tab_hover = {
+                                bg_color = "#0a0c10",
+                                fg_color = "#79c0ff",
+                                italic = true,
+                        },
+                },
+        },
+
+        -- Title bar styling
+        window_frame = {
+                active_titlebar_bg = "#0d1117",
+                active_titlebar_fg = "#f0f6fc",
+                inactive_titlebar_bg = "#0d1117",
+                inactive_titlebar_fg = "#f0f6fc",
         },
 }
