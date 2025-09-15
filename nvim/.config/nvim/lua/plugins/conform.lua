@@ -29,17 +29,26 @@ return {
 
     formatters_by_ft = {
       lua = { 'stylua' },
-      cs = { 'csharpier_any' }, -- use the robust wrapper
-      javascript = { 'prettier' },
-      javascriptreact = { 'prettier' },
-      typescript = { 'prettier' },
-      typescriptreact = { 'prettier' },
+      cs = { 'csharpier_any' }, -- robust wrapper
+      javascript = { 'biome', 'prettier' },
+      javascriptreact = { 'biome', 'prettier' },
+      typescript = { 'biome', 'prettier' },
+      typescriptreact = { 'biome', 'prettier' },
       html = { 'prettier' },
       css = { 'prettier' },
       python = { 'ruff_format' },
     },
 
     formatters = {
+      biome = {
+        command = 'biome',
+        args = { 'format', '--write', '--stdin-file-path', '$FILENAME' },
+        stdin = true,
+        -- optional: only run biome if a biome.json exists in the project
+        condition = function(ctx)
+          return vim.fs.find('biome.json', { upward = true, path = ctx.dirname })[1] ~= nil
+        end,
+      },
       csharpier_any = {
         -- Use a temp file; CSharpier will rewrite it, Conform copies it back.
         stdin = false,
