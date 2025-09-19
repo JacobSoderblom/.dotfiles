@@ -42,9 +42,9 @@ else
 	read -r -p "Specify size variant [standard|compact] (Default: compact): " SIZE
 	[ -z "$SIZE" ] && SIZE="compact"
 
-	echo
-	read -r -p "Enter colorscheme [black|nord|dracula|gruvbox|everforest|catppuccin] (Default: black): " COLORSCHEME
-	[ -z "$COLORSCHEME" ] && COLORSCHEME="black"
+        echo
+        read -r -p "Enter colorscheme [black|nord|dracula|gruvbox|everforest|github] (Default: black): " COLORSCHEME
+        [ -z "$COLORSCHEME" ] && COLORSCHEME="black"
 
 	echo
 	read -r -p "Enter tweak(s) for $THEME_NAME [rimless|normal|float] (Default: rimless normal): " TWEAKS
@@ -94,7 +94,7 @@ cd "$BASE_DIR/build" || exit 1
 find . -depth -name "$THEME_NAME*" | while read -r path; do
 	new_path=$(dirname "$path")/$(
 		basename "$path" | sed -e 's/\(Blue\|Purple\|Pink\|Red\|Orange\|Yellow\|Green\|Teal\|Grey\|Compact\|compact\)-//gI' \
-			-e 's/-\(Nord\|Dracula\|Gruvbox\|Everforest\|Catppuccin\|Compact\|compact\)//gI' \
+                        -e 's/-\(Nord\|Dracula\|Gruvbox\|Everforest\|GitHub\|Compact\|compact\)//gI' \
 			-e 's/-Dark/-dark/g' \
 			-e 's/-Light/-light/g'
 	)
