@@ -1,139 +1,126 @@
 return {
-  --==========================[ MASON LSP MANAGER ]==========================--
-
-  -- Manager for language servers, linters, formatters
+  --==========================[ MASON INSTALLER ]==========================--
   {
-    'mason-org/mason.nvim',
+    'williamboman/mason.nvim',
     opts = {
       ui = {
+        border = 'rounded',
         icons = {
           package_installed = ' ',
           package_pending = ' ',
           package_uninstalled = ' ',
         },
-        border = 'rounded',
-        keymaps = {
-          toggle_server_expand = '<CR>',
-          install_server = 'i',
-          update_server = 'u',
-          check_server_version = 'c',
-          update_all_servers = 'U',
-          check_outdated_servers = 'C',
-          uninstall_server = 'X',
-          cancel_installation = '<C-c>',
-        },
+      },
+      -- you can keep your custom registries if you need them
+      registries = {
+        'github:mason-org/mason-registry',
+        'github:Crashdummyy/mason-registry',
       },
     },
   },
 
-  --=====================[ MASON TOOLS AUTO INSTALLER ]=====================--
-
-  -- {
-  --   'WhoIsSethDaniel/mason-tool-installer.nvim',
-  --   opts = {
-  --     ensure_installed = {
-  --       'bash-language-server', -- Bash LSP
-  --       'lua-language-server', -- Lua LSP
-  --       'harper-ls',
-  --       'pyright', -- Python LSP
-  --       'ruff', -- Python formatter & linter
-  --       'ruff-lsp', -- Ruff LSP
-  --       'debugpy', -- Python DAP
-  --     },
-  --   },
-  -- },
-  --
-  --==========================[ MASON LSP CONFIG ]==========================--
-
-  -- Configures Mason installed servers to LSPConfig
+  --======================[ MASON ↔ LSP (native API) ]=====================--
   {
-    'mason-org/mason-lspconfig.nvim',
-    opts = {
-      ensure_installed = {},
-      dependencies = {
-        'neovim/nvim-lspconfig',
-      },
+    'williamboman/mason-lspconfig.nvim',
+    dependencies = {
+      'neovim/nvim-lspconfig',
+      'hrsh7th/cmp-nvim-lsp',
     },
-
-    -- Manually configure servers (no setup_handlers in this fork)
-    config = function()
-      require('mason').setup {
-        registries = {
-          'github:mason-org/mason-registry',
-          'github:Crashdummyy/mason-registry',
-        },
-      }
-
-      local mason_lspconfig = require 'mason-lspconfig'
-      mason_lspconfig.setup {
-        ensure_installed = {
-          'lua_ls',
-          'ts_ls',
-          'eslint',
-          'jsonls',
-          'html',
-          'cssls',
-          'gopls',
-          'pyright',
-          'ruff',
-        },
-      }
-
-      local lspconfig = require 'lspconfig'
-      local util = require 'lspconfig.util'
-
-      -----------------------------------------------------------------------
-      -- Default setup for servers OTHER than pyright
-      -----------------------------------------------------------------------
-      local default_servers = {
+    opts = {
+      ensure_installed = {
+        -- General
         'lua_ls',
-        'ts_ls',
-        'eslint',
         'jsonls',
         'html',
         'cssls',
+        'eslint',
         'gopls',
+        -- TypeScript (new id is ts_ls; we’ll alias to tsserver if needed)
+        'ts_ls',
+        -- Python
+        'pyright',
         'ruff',
-      }
-      for _, server in ipairs(default_servers) do
-        if lspconfig[server] then
-          lspconfig[server].setup {}
+      },
+      -- New flow: mason-lspconfig will auto-enable any server we define via vim.lsp.config()
+      automatic_enable = true,
+    },
+    config = function(_, opts)
+      local mlsp = require 'mason-lspconfig'
+      mlsp.setup(opts)
+
+      -- nvim-cmp capabilities (auto-imports, snippets, richer items)
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+      -- Helper to define server configs (works with Neovim 0.11+)
+      local function define(server, cfg)
+        -- Handle ts_ls -> tsserver fallback if your lspconfig uses the old name
+        if server == 'ts_ls' then
+          local ok = pcall(require, 'lspconfig.configs.ts_ls')
+          if not ok then
+            server = 'tsserver'
+          end
         end
+
+        vim.lsp.config(
+          server,
+          vim.tbl_deep_extend('force', {
+            capabilities = capabilities,
+          }, cfg or {})
+        )
       end
 
-      -----------------------------------------------------------------------
-      -- PYRIGHT: run inside uv + correct root + monorepo paths
-      -----------------------------------------------------------------------
-      local mason_bin = vim.fn.stdpath 'data' .. '/mason/bin/pyright-langserver'
+      -- ---------- Generic servers ----------
+      for _, s in ipairs { 'lua_ls', 'jsonls', 'html', 'cssls', 'eslint', 'gopls', 'ts_ls' } do
+        define(s, {})
+      end
 
-      lspconfig.pyright.setup {
-        -- 1) Start the language server inside your uv-managed environment
-        cmd = { 'uv', 'run', mason_bin, '--stdio' },
+      -- ---------- Lua: make lua_ls happy with Neovim runtime (optional but nice)
+      define('lua_ls', {
+        settings = {
+          Lua = {
+            workspace = { checkThirdParty = false },
+            diagnostics = { globals = { 'vim' } },
+            telemetry = { enable = false },
+          },
+        },
+      })
 
-        -- 2) Ensure the workspace root is the repo root
-        root_dir = util.root_pattern('pyrightconfig.json', 'pyproject.toml', '.git'),
-
-        -- 3) Also explicitly set the interpreter from the detected root
-        before_init = function(_, config)
-          local buf = vim.api.nvim_buf_get_name(0)
-          local root = util.find_git_ancestor(buf) or util.root_pattern('pyrightconfig.json', 'pyproject.toml')(buf) or vim.loop.cwd()
-          config.settings = config.settings or {}
-          config.settings.python = config.settings.python or {}
-          config.settings.python.pythonPath = root .. '/.venv/bin/python'
+      -- ---------- Python: Ruff (new first-party server) ----------
+      -- Fast linting, quick fixes, organize imports. Let Pyright own hover.
+      define('ruff', {
+        on_attach = function(client)
+          client.server_capabilities.hoverProvider = false
         end,
+      })
 
+      -- ---------- Python: Pyright ----------
+      -- LSP features + auto-import suggestions
+      define('pyright', {
         settings = {
           python = {
             analysis = {
-              diagnosticMode = 'workspace', -- analyze full workspace
+              autoImportCompletions = true, -- ✨ auto-imports in completion
+              diagnosticMode = 'workspace',
               autoSearchPaths = true,
               useLibraryCodeForTypes = true,
-              -- Your repo sources live under "py/", expose that to the analyzer
-              extraPaths = { 'py' },
+              -- Add extraPaths only if you really have a custom src dir, e.g. "py"
+              -- extraPaths = { 'py' },
             },
           },
         },
-      }
+      })
+
+      -- Drop Ruff diagnostics; keep code actions, formatting, etc.
+      vim.api.nvim_create_autocmd('LspAttach', {
+        group = vim.api.nvim_create_augroup('ruff_drop_diags', { clear = true }),
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client and client.name == 'ruff' then
+            -- Override the diagnostics handler for this client only
+            client.handlers['textDocument/publishDiagnostics'] = function() end
+          end
+        end,
+      })
     end,
   },
 }

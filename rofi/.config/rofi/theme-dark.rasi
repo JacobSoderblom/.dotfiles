@@ -1,12 +1,12 @@
 * {
-  background:                  #0F0F0F;
-  background-alt:              #0A0A0A;
-  foreground:                  #E0E0E0;
-  selected:                    #E0E0E0;
-  active:                      #0F0F0F;
-  urgent:                      #CCCCCC;
-  border:                      #2B2B2B;
-  background-alpha:            rgba(15, 15, 15, 0.5);
+  background:                  #0a0c10;
+  background-alt:              #161b22;
+  foreground:                  #f0f6fc;
+  selected:                    #f0f6fc;
+  active:                      #0a0c10;
+  urgent:                      #ff7b72;
+  border:                      #21262d;
+  background-alpha:            rgba(10, 12, 16, 0.5);
 }
 
 configuration {
